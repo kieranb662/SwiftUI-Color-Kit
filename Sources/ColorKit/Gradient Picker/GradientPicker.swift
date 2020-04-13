@@ -53,7 +53,7 @@ public struct GradientData: Identifiable {
     /// stop colors.
     public var stops: [(color: ColorToken, location:  CGFloat)]
     /// The currently selected stop if one is selected
-    public var selected: Int? = nil
+    public var selected: UUID? = nil
     
     // Linear
     /// `LinearGradient` Start Location
@@ -143,7 +143,7 @@ public class GradientManager: ObservableObject {
     @Published public var gradient: GradientData
     @Published public var hideTools: Bool = false
     
-    public func select(_ id: Int) {
+    public func select(_ id: UUID) {
         if gradient.selected == id {
             gradient.selected = nil
         } else {

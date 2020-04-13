@@ -25,9 +25,10 @@ import CGExtender
 public struct LinearStop: View {
     @Environment(\.linearGradientPickerStyle) private var style: AnyLinearGradientPickerStyle
     @EnvironmentObject private var manager: GradientManager
+    @Binding var location: CGFloat
     @State private var isActive: Bool = false // Used to keep track of the Stops drag state
     private let space: String = "Linear Gradient" // Linear Gradients coordinate space identifier
-    public let id: Int // Used to identify the stop
+    public let id: UUID // Used to identify the stop
     public let start: CGPoint // Current location of the start handle
     public let end: CGPoint // Current location of the end handle
     // calculates the angle of the line segment defined by the start and end locations and the adds 90 degrees
@@ -38,16 +39,17 @@ public struct LinearStop: View {
     }
     // Uses the parametric form of the line defined between the start and end handles to calculate the location of the stop
     private var lerp: CGPoint {
-        let location = self.manager.gradient.stops[self.id].location
+     
         let x = (1-location)*start.x + location*end.x
         let y = (1-location)*start.y + location*end.y
         return CGPoint(x: x, y: y)
     }
     private var configuration: GradientStopConfiguration {
-        .init(isActive,
+        let color = manager.gradient.stops.filter({self.id == $0.color.id}).first?.color.color ?? Color.white
+        return .init(isActive,
               manager.gradient.selected == id,
               manager.hideTools,
-              manager.gradient.stops[id].color.color,
+              color,
               angle)
     }
     
@@ -59,11 +61,11 @@ public struct LinearStop: View {
                     .onTapGesture { self.manager.select(self.id) }
                     .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .named(self.space))
                         .onChanged({
-                            self.manager.gradient.stops[self.id].location = calculateParameter(self.start, self.end, $0.location)
+                            self.location = calculateParameter(self.start, self.end, $0.location)
                             self.isActive = true
                         })
                         .onEnded({
-                            self.manager.gradient.stops[self.id].location = calculateParameter(self.start, self.end, $0.location)
+                            self.location = calculateParameter(self.start, self.end, $0.location)
                             self.isActive = false
                         }))
             }
@@ -241,7 +243,7 @@ public struct LinearGradientPicker: View {
     }
     private func makeStops(_ proxy: GeometryProxy) -> some View {
         ForEach(self.manager.gradient.stops.indices, id: \.self) { (i) in
-            LinearStop(id: i, start: self.currentStartPoint(proxy), end: self.currentEndPoint(proxy)).tag(i)
+            LinearStop(location: self.$manager.gradient.stops[i].location, id: self.manager.gradient.stops[i].color.id, start: self.currentStartPoint(proxy), end: self.currentEndPoint(proxy))
         }
     }
     
