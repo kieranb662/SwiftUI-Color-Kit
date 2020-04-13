@@ -24,8 +24,9 @@ import CGExtender
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct LinearStop: View {
     @Environment(\.linearGradientPickerStyle) private var style: AnyLinearGradientPickerStyle
-    @EnvironmentObject private var manager: GradientManager
-    @Binding var location: CGFloat
+    @Binding var stop: GradientData.Stop
+    @Binding var selected: UUID?
+    var isHidden: Bool
     @State private var isActive: Bool = false // Used to keep track of the Stops drag state
     private let space: String = "Linear Gradient" // Linear Gradients coordinate space identifier
     public let id: UUID // Used to identify the stop
@@ -40,17 +41,24 @@ public struct LinearStop: View {
     // Uses the parametric form of the line defined between the start and end handles to calculate the location of the stop
     private var lerp: CGPoint {
      
-        let x = (1-location)*start.x + location*end.x
-        let y = (1-location)*start.y + location*end.y
+        let x = (1-stop.location)*start.x + stop.location*end.x
+        let y = (1-stop.location)*start.y + stop.location*end.y
         return CGPoint(x: x, y: y)
     }
     private var configuration: GradientStopConfiguration {
-        let color = manager.gradient.stops.filter({self.id == $0.color.id}).first?.color.color ?? Color.white
+        
         return .init(isActive,
-              manager.gradient.selected == id,
-              manager.hideTools,
-              color,
+              selected == id,
+              isHidden,
+              stop.color.color,
               angle)
+    }
+    func select() {
+        if selected == id {
+            self.selected = nil
+        } else {
+            self.selected = id
+        }
     }
     
     public var body: some View {
@@ -58,14 +66,14 @@ public struct LinearStop: View {
             ZStack {
                 self.style.makeStop(configuration: self.configuration)
                     .offset(x: self.lerp.x - proxy.size.width/2, y: self.lerp.y - proxy.size.height/2)
-                    .onTapGesture { self.manager.select(self.id) }
+                    .onTapGesture { self.select() }
                     .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .named(self.space))
                         .onChanged({
-                            self.location = calculateParameter(self.start, self.end, $0.location)
+                            self.stop.location = calculateParameter(self.start, self.end, $0.location)
                             self.isActive = true
                         })
                         .onEnded({
-                            self.location = calculateParameter(self.start, self.end, $0.location)
+                            self.stop.location = calculateParameter(self.start, self.end, $0.location)
                             self.isActive = false
                         }))
             }
@@ -243,7 +251,12 @@ public struct LinearGradientPicker: View {
     }
     private func makeStops(_ proxy: GeometryProxy) -> some View {
         ForEach(self.manager.gradient.stops.indices, id: \.self) { (i) in
-            LinearStop(location: self.$manager.gradient.stops[i].location, id: self.manager.gradient.stops[i].color.id, start: self.currentStartPoint(proxy), end: self.currentEndPoint(proxy))
+            LinearStop(stop: self.$manager.gradient.stops[i],
+                       selected: self.$manager.selected,
+                       isHidden: self.manager.hideTools,
+                       id: self.manager.gradient.stops[i].id,
+                       start: self.currentStartPoint(proxy),
+                       end: self.currentEndPoint(proxy))
         }
     }
     

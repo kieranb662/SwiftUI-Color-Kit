@@ -22,8 +22,10 @@ import CGExtender
 public struct AngularStop: View {
     // MARK: State
     @Environment(\.angularGradientPickerStyle) private var style: AnyAngularGradientPickerStyle
-    @EnvironmentObject private var manager: GradientManager
-    @Binding var location: CGFloat
+    @Binding var stop: GradientData.Stop
+    @Binding var selected: UUID?
+    var isHidden: Bool
+    
     @State private var isActive: Bool = false
     // MARK: Input Values
     private let space: String = "Angular Gradient"
@@ -32,15 +34,15 @@ public struct AngularStop: View {
     public let end: Double
     public let center: CGPoint
     private var configuration: GradientStopConfiguration {
-        let color = manager.gradient.stops.filter({self.id == $0.color.id}).first?.color.color ?? Color.white
-        return .init(isActive, manager.gradient.selected == id, manager.hideTools, color, .zero)
+        
+        return .init(isActive, selected == id, isHidden, stop.color.color, .zero)
     }
     
     // MARK:  Stop Utilities
     
     // The curent offset of the gradient stop from the center thumb
     private func offset(_ proxy: GeometryProxy) -> CGSize {
-        let angle = Double(location)*(start > end ? end+1-start: end-start) + start
+        let angle = Double(stop.location)*(start > end ? end+1-start: end-start) + start
         let r = Double(proxy.size.width > proxy.size.height ? proxy.size.height/2 : proxy.size.width/2) - 20
         let x = r*cos((angle) * 2 * .pi)
         let y = r*sin((angle) * 2 * .pi)
@@ -55,14 +57,21 @@ public struct AngularStop: View {
         if self.start > self.end {
             if direction > self.start && direction < 1 {
                 direction = (direction - self.start)/(self.end+1 - self.start)
-                self.location = CGFloat(direction)
+                self.stop.location = CGFloat(direction)
             } else {
                 direction = max(min(direction + 1 , self.end + 1), self.start)
-                self.location = abs(CGFloat((direction-self.start)/((self.end+1)-self.start) ))
+                self.stop.location = abs(CGFloat((direction-self.start)/((self.end+1)-self.start) ))
             }
         } else {
             direction = max(min(direction, self.end), self.start)
-            self.location = CGFloat((direction-self.start)/(self.end-self.start) )
+            self.stop.location = CGFloat((direction-self.start)/(self.end-self.start) )
+        }
+    }
+    func select() {
+        if selected == id {
+            self.selected = nil
+        } else {
+            self.selected = id
         }
     }
     // MARK: Stop Body
@@ -71,7 +80,7 @@ public struct AngularStop: View {
             ZStack {
                 self.style.makeStop(configuration: self.configuration)
                     .offset(self.offset(proxy))
-                    .onTapGesture { self.manager.select(self.id) }
+                    .onTapGesture { self.select()}
                     .simultaneousGesture(DragGesture(minimumDistance: 5, coordinateSpace: .named(self.space))
                         .onChanged({
                             self.calculateStopLocation($0.location)
@@ -259,8 +268,10 @@ public struct AngularGradientPicker: View {
     // Creates all stop thumbs
     private func stops(_ proxy: GeometryProxy) -> some View {
         ForEach(self.manager.gradient.stops.indices, id: \.self) { (i) in
-            AngularStop(location: self.$manager.gradient.stops[i].location,
-                        id: self.manager.gradient.stops[i].color.id,
+            AngularStop(stop: self.$manager.gradient.stops[i],
+                        selected: self.$manager.selected,
+                        isHidden: self.manager.hideTools,
+                        id: self.manager.gradient.stops[i].id,
                         start: self.currentStates.start,
                         end: self.endState + self.manager.gradient.endAngle,
                         center: self.currentCenter(proxy))

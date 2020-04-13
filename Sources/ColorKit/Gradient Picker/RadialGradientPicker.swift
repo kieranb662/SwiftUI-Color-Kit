@@ -31,14 +31,23 @@ public struct RadialStop: View {
         }
     }
     @Environment(\.radialGradientPickerStyle) private var style: AnyRadialGradientPickerStyle
-    @EnvironmentObject private var manager: GradientManager
-    @Binding var location: CGFloat
+    @Binding var stop: GradientData.Stop
+    @Binding var selected: UUID?
+    var isHidden: Bool
     @State private var isActive: Bool = false // Used to keep track of the Stops drag state
     private let space: String = "Radial Gradient" // Radial Gradients coordinate space identifier
     public let id: UUID // Used to identify the stop
     private var configuration: GradientStopConfiguration {
-        let color = manager.gradient.stops.filter({self.id == $0.color.id}).first?.color.color ?? Color.white
-            return .init(isActive, manager.gradient.selected == id, manager.hideTools, color, .zero)
+        
+        return .init(isActive, selected == id, isHidden, stop.color.color, .zero)
+    }
+    
+    func select() {
+        if selected == id {
+            self.selected = nil
+        } else {
+            self.selected = id
+        }
     }
     
     public var body: some View {
@@ -49,13 +58,14 @@ public struct RadialStop: View {
                     .anchorPreference(key: RadialKey.self, value: .bounds, transform: { proxy[$0] })
                     .overlayPreferenceValue(RadialKey.self, { (rect)  in
                         self.style.makeStop(configuration: self.configuration)
-                            .offset(x: (self.location - 0.5)*(proxy.size.width-rect.width-4), y: 0)
-                            .onTapGesture { self.manager.select(self.id) }
-                            .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .named(self.space)).onChanged({
-                                self.location = max(min($0.location.x/proxy.size.width, 1),0)
+                            .offset(x: (self.stop.location - 0.5)*(proxy.size.width-rect.width-4), y: 0)
+                            .onTapGesture { self.select() }
+                            .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .named(self.space))
+                                .onChanged({
+                                self.stop.location = max(min($0.location.x/proxy.size.width, 1),0)
                                 self.isActive = true
                             }).onEnded({
-                                self.location = max(min($0.location.x/proxy.size.width, 1),0)
+                                self.stop.location = max(min($0.location.x/proxy.size.width, 1),0)
                                 self.isActive = false
                             }))
                     })
@@ -205,7 +215,10 @@ public struct RadialGradientPicker: View {
         ZStack {
             self.style.makeBar(configuration: .init(gradient: self.manager.gradient.gradient, isHidden: self.manager.hideTools))
             ForEach(self.manager.gradient.stops.indices, id: \.self) { (i) in
-                RadialStop(location: self.$manager.gradient.stops[i].location , id: self.manager.gradient.stops[i].color.id)
+                RadialStop(stop: self.$manager.gradient.stops[i],
+                           selected: self.$manager.selected,
+                           isHidden: self.manager.hideTools,
+                           id: self.manager.gradient.stops[i].id)
             }
         }
         .frame(height: 50)
