@@ -35,7 +35,7 @@ public struct AngularStop: View {
     }
     
     // MARK:  Stop Utilities
-
+    
     // The curent offset of the gradient stop from the center thumb
     private func offset(_ proxy: GeometryProxy) -> CGSize {
         let angle = Double(manager.gradient._stops[id].location)*(start > end ? end+1-start: end-start) + start
@@ -197,11 +197,11 @@ public struct AngularGradientPicker: View {
     // Creates the Angular Gradient
     private func gradient(_ proxy: GeometryProxy) -> some View {
         AngularGradient(gradient: self.manager.gradient.gradient,
-                    center: self.currentCenter(proxy),
-                    startAngle: Angle(radians: self.currentStates.start*2 * .pi),
-                    endAngle: Angle(radians: self.currentStates.end*2 * .pi))
-        .drawingGroup(opaque: false, colorMode: self.manager.gradient.renderMode.renderingMode)
-        .animation(.linear)
+                        center: self.currentCenter(proxy),
+                        startAngle: Angle(radians: self.currentStates.start*2 * .pi),
+                        endAngle: Angle(radians: self.currentStates.end*2 * .pi))
+            .drawingGroup(opaque: false, colorMode: self.manager.gradient.renderMode.renderingMode)
+            .animation(.linear)
     }
     // Created the center thumb
     private func center(_ proxy: GeometryProxy) -> some View {
@@ -256,11 +256,12 @@ public struct AngularGradientPicker: View {
     }
     // Creates all stop thumbs
     private func stops(_ proxy: GeometryProxy) -> some View {
-        ForEach(self.manager.gradient._stops.indices, id: \.self) { (i) in
+        ForEach(self.manager.gradient.stops.indices, id: \.self) { (i) in
             AngularStop(id: i,
                         start: self.currentStates.start,
                         end: self.endState + self.manager.gradient.endAngle,
                         center: self.currentCenter(proxy))
+                .tag(i)
         }.position(self.currentCenter(proxy))
     }
     

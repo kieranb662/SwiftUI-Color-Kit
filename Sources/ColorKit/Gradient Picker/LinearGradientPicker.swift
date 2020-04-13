@@ -240,8 +240,8 @@ public struct LinearGradientPicker: View {
 
     }
     private func makeStops(_ proxy: GeometryProxy) -> some View {
-        ForEach(self.manager.gradient._stops.indices, id: \.self) { (i) in
-            LinearStop(id: i, start: self.currentStartPoint(proxy), end: self.currentEndPoint(proxy))
+        ForEach(self.manager.gradient.stops.indices, id: \.self) { (i) in
+            LinearStop(id: i, start: self.currentStartPoint(proxy), end: self.currentEndPoint(proxy)).tag(i)
         }
     }
     

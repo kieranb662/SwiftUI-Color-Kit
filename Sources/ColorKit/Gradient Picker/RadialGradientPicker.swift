@@ -202,7 +202,7 @@ public struct RadialGradientPicker: View {
     private var gradientBar: some View {
         ZStack {
             self.style.makeBar(configuration: .init(gradient: self.manager.gradient.gradient, isHidden: self.manager.hideTools))
-            ForEach(self.manager.gradient._stops.indices, id: \.self) { (i) in
+            ForEach(self.manager.gradient.stops.indices, id: \.self) { (i) in
                 RadialStop(id: i).tag(i)
             }
         }
