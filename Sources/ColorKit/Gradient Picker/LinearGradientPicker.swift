@@ -40,18 +40,17 @@ public struct LinearStop: View {
     }
     // Uses the parametric form of the line defined between the start and end handles to calculate the location of the stop
     private var lerp: CGPoint {
-     
+        
         let x = (1-stop.location)*start.x + stop.location*end.x
         let y = (1-stop.location)*start.y + stop.location*end.y
         return CGPoint(x: x, y: y)
     }
     private var configuration: GradientStopConfiguration {
-        
         return .init(isActive,
-              selected == id,
-              isHidden,
-              stop.color.color,
-              angle)
+                     selected == id,
+                     isHidden,
+                     stop.color.color,
+                     angle)
     }
     func select() {
         if selected == id {
@@ -141,6 +140,7 @@ public struct LinearGradientPicker: View {
     private let space: String = "Linear Gradient"
     @GestureState private var startState: DragState = .inactive // Gesture state for the start point thumb
     @GestureState private var endState: DragState = .inactive // Gesture state for the end point thumb
+    public init() {}
     enum DragState {
         case inactive
         case pressing
@@ -247,7 +247,7 @@ public struct LinearGradientPicker: View {
         return style.makeStartHandle(configuration: configuration)
             .offset(x: offsetX, y: offsetY)
             .gesture(longPressDrag)
-
+        
     }
     private func makeStops(_ proxy: GeometryProxy) -> some View {
         ForEach(self.manager.gradient.stops.indices, id: \.self) { (i) in

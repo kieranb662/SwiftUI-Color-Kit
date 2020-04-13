@@ -34,11 +34,12 @@ public struct RadialStop: View {
     @Binding var stop: GradientData.Stop
     @Binding var selected: UUID?
     var isHidden: Bool
+    public let id: UUID // Used to identify the stop
+    
     @State private var isActive: Bool = false // Used to keep track of the Stops drag state
     private let space: String = "Radial Gradient" // Radial Gradients coordinate space identifier
-    public let id: UUID // Used to identify the stop
+    
     private var configuration: GradientStopConfiguration {
-        
         return .init(isActive, selected == id, isHidden, stop.color.color, .zero)
     }
     
@@ -160,7 +161,8 @@ public struct RadialGradientPicker: View {
     @State private var centerState: CGSize = .zero // Value representing the actual drag transaltion of the center thumb
     @State private var startState: Double = 0 // Value on [0,1] representing the current dragging of the start handle
     @State private var endState: Double = 0 // Value on [0,1] representing the current dragging of the end handle
-    private let space: String = "Radial Gradient"  // Indentifier used to denote the pickers coordinate space 
+    private let space: String = "Radial Gradient"  // Indentifier used to denote the pickers coordinate space
+    public init() {}
    // The current Unit location of the center thumb
     private func currentCenter(_ proxy: GeometryProxy) -> UnitPoint {
         let x = manager.gradient.center.x + centerState.width/proxy.size.width

@@ -20,22 +20,22 @@ import CGExtender
 /// Then the angle is constrained to between the start and end handles current angles.
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct AngularStop: View {
-    // MARK: State
     @Environment(\.angularGradientPickerStyle) private var style: AnyAngularGradientPickerStyle
+    // MARK: Input Values
     @Binding var stop: GradientData.Stop
     @Binding var selected: UUID?
     var isHidden: Bool
-    
-    @State private var isActive: Bool = false
-    // MARK: Input Values
-    private let space: String = "Angular Gradient"
     public let id: UUID
     public let start: Double
     public let end: Double
     public let center: CGPoint
+    
+    @State private var isActive: Bool = false
+    private let space: String = "Angular Gradient"
+    
     private var configuration: GradientStopConfiguration {
-        
-        return .init(isActive, selected == id, isHidden, stop.color.color, .zero)
+        let angle = Double(stop.location)*(start > end ? end+1-start: end-start) + start
+        return .init(isActive, selected == id, isHidden, stop.color.color, Angle(degrees: angle*360))
     }
     
     // MARK:  Stop Utilities
@@ -165,6 +165,7 @@ public struct AngularGradientPicker: View {
     @State private var centerState: CGSize = .zero // Value representing the actual drag transaltion of the center thumb
     @State private var startState: Double = 0 // Value on [0,1] representing the current dragging of the start handle
     @State private var endState: Double = 0 // Value on [0,1] representing the current dragging of the end handle
+    public init() {}
     // Convience value that calculates and adjusts the current start and end states such that the end value is always greater than the start
     private var currentStates: (start: Double, end: Double) {
         let start = startState + self.manager.gradient.startAngle

@@ -49,7 +49,7 @@ public struct GradientData: Identifiable {
             self.location = location
         }
         
-        var gradientStop: Gradient.Stop {
+        public var gradientStop: Gradient.Stop {
             return .init(color: color.color, location: location)
         }
     }
