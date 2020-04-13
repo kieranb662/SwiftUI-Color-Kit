@@ -11,16 +11,16 @@ import Shapes
 import Sliders
 
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-struct RGBSliderStyle: LSliderStyle {
-    enum ColorType: String, CaseIterable {
+public struct RGBSliderStyle: LSliderStyle {
+    public enum ColorType: String, CaseIterable {
         case red
         case green
         case blue
     }
-    var strokeWidth: CGFloat
-    var type: ColorType
-    var color: ColorToken
-    var colors: [Color] {
+    public var sliderHeight: CGFloat
+    public var type: ColorType
+    public var color: ColorToken
+    private var colors: [Color] {
         switch type {
         case .red:
             return [Color(self.color.rgbColorSpace.space, red: 0, green: color.green, blue: color.blue),
@@ -34,7 +34,7 @@ struct RGBSliderStyle: LSliderStyle {
         }
     }
     
-    func makeThumb(configuration: LSliderConfiguration) -> some View {
+    public func makeThumb(configuration: LSliderConfiguration) -> some View {
         let currentColor: Color =  {
             switch type {
             case .red:
@@ -54,18 +54,18 @@ struct RGBSliderStyle: LSliderStyle {
             Circle()
                 .fill(currentColor)
                 .scaleEffect(0.8)
-        }.frame(width: strokeWidth, height: strokeWidth)
+        }.frame(width: sliderHeight, height: sliderHeight)
     }
 
-    func makeTrack(configuration: LSliderConfiguration) -> some View {
-        let style: StrokeStyle = .init(lineWidth: strokeWidth, lineCap: .round)
+    public func makeTrack(configuration: LSliderConfiguration) -> some View {
+        let style: StrokeStyle = .init(lineWidth: sliderHeight, lineCap: .round)
         let gradient = LinearGradient(gradient: Gradient(colors: colors), startPoint: .leading, endPoint: .trailing)
         return AdaptiveLine(angle: configuration.angle)
             .stroke(gradient, style: style)
             .overlay(GeometryReader { proxy in
                 Capsule()
                     .stroke(Color.white)
-                    .frame(width: proxy.size.width + self.strokeWidth)
+                    .frame(width: proxy.size.width + self.sliderHeight)
                     .rotationEffect(configuration.angle)
             })
     }
@@ -75,7 +75,16 @@ public struct RGBColorPicker: View {
     @Binding public var color: ColorToken
     public var sliderHeights: CGFloat = 40
     
-    func makeSlider( _ color: RGBSliderStyle.ColorType) -> some View {
+    public init(_ color: Binding<ColorToken>) {
+        self._color = color
+    }
+    
+    public init(_ color: Binding<ColorToken>, sliderHeights: CGFloat) {
+        self._color = color
+        self.sliderHeights = sliderHeights
+    }
+    
+    private func makeSlider( _ color: RGBSliderStyle.ColorType) -> some View {
         let value: Binding<Double> =  {
             switch color {
             case .red:
@@ -91,7 +100,7 @@ public struct RGBColorPicker: View {
         }()
         
         return LSlider(value, range: 0...1, angle: .zero)
-            .linearSliderStyle(RGBSliderStyle(strokeWidth: sliderHeights, type: color, color: self.color))
+            .linearSliderStyle(RGBSliderStyle(sliderHeight: sliderHeights, type: color, color: self.color))
             .frame(height: sliderHeights)
        }
     

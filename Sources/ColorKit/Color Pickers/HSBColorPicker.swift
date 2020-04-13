@@ -12,13 +12,13 @@ import Sliders
 
 
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-struct HueSliderStyle: LSliderStyle {
-    var strokeWidth: CGFloat 
+public struct HueSliderStyle: LSliderStyle {
+    public var sliderHeight: CGFloat 
     private let hueColors = stride(from: 0, to: 1, by: 0.03).map {
         Color(hue: $0, saturation: 1, brightness: 1)
     }
     
-    func makeThumb(configuration: LSliderConfiguration) -> some View {
+    public func makeThumb(configuration: LSliderConfiguration) -> some View {
         return ZStack {
             Circle()
                 .fill(Color.white)
@@ -26,18 +26,18 @@ struct HueSliderStyle: LSliderStyle {
             Circle()
                 .fill(Color(hue: configuration.pctFill, saturation: 1, brightness: 1))
                 .scaleEffect(0.8)
-        }.frame(width: strokeWidth, height: strokeWidth)
+        }.frame(width: sliderHeight, height: sliderHeight)
     }
     
-    func makeTrack(configuration: LSliderConfiguration) -> some View {
-        let style: StrokeStyle = .init(lineWidth: strokeWidth, lineCap: .round)
+    public func makeTrack(configuration: LSliderConfiguration) -> some View {
+        let style: StrokeStyle = .init(lineWidth: sliderHeight, lineCap: .round)
         let gradient = LinearGradient(gradient: Gradient(colors: hueColors), startPoint: .leading, endPoint: .trailing)
         return AdaptiveLine(angle: configuration.angle)
             .stroke(gradient, style: style)
             .overlay(GeometryReader { proxy in
                 Capsule()
                     .stroke(Color.white)
-                    .frame(width: proxy.size.width + self.strokeWidth)
+                    .frame(width: proxy.size.width + self.sliderHeight)
                     .rotationEffect(configuration.angle)
             })
     }
@@ -45,7 +45,7 @@ struct HueSliderStyle: LSliderStyle {
 
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct SaturationBrightnessStyle: TrackPadStyle {
-    var hue: Double
+    public var hue: Double
     private var saturationColors: [Color] {
         return stride(from: 0, to: 1, by: 0.01).map {
             Color(hue: hue, saturation: $0, brightness: 1)
@@ -79,11 +79,20 @@ public struct SaturationBrightnessStyle: TrackPadStyle {
 
 
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-struct HSBColorPicker: View {
-    @Binding var color: ColorToken
-    var sliderHeight: CGFloat = 40
+public struct HSBColorPicker: View {
+    @Binding public var color: ColorToken
+    public var sliderHeight: CGFloat = 40
     
-    var body: some View {
+    public init(_ color: Binding<ColorToken>) {
+        self._color = color
+    }
+    
+    public init(_ color: Binding<ColorToken>, sliderHeight: CGFloat) {
+        self._color = color
+        self.sliderHeight = sliderHeight
+    }
+    
+    public var body: some View {
         
         VStack(spacing: 30) {
             TrackPad(value: Binding(get: {CGPoint(x: self.color.saturation, y: self.color.brightness)},
@@ -95,7 +104,7 @@ struct HSBColorPicker: View {
                 .trackPadStyle(SaturationBrightnessStyle(hue: self.color.hue))
             
             LSlider(Binding(get: {self.color.hue}, set: {self.color = self.color.update(hue: $0)}))
-                .linearSliderStyle(HueSliderStyle(strokeWidth: sliderHeight))
+                .linearSliderStyle(HueSliderStyle(sliderHeight: sliderHeight))
                 .frame(height: sliderHeight)
                 .padding(.horizontal, sliderHeight/2)
         }

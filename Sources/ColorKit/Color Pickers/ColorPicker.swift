@@ -9,8 +9,8 @@
 import SwiftUI
 
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-struct ColorPickerButton: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
+public struct ColorPickerButton: ButtonStyle {
+    public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundColor(configuration.isPressed ? .white : .blue)
             .frame(width: 20, height: 20)
@@ -30,14 +30,14 @@ struct ColorPickerButton: ButtonStyle {
 
 
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-struct ColorPicker: View {
-    @ObservedObject var manager: ColorManager
+public struct ColorPicker: View {
+    @ObservedObject public var manager: ColorManager
   
-    var colors: [ColorToken] {
+    private var colors: [ColorToken] {
         Array(self.manager.colors.values).sorted(by: {$0.dateCreated > $1.dateCreated})
     }
     
-    var selectedColor: Binding<ColorToken> {
+    private var selectedColor: Binding<ColorToken> {
         Binding(get: {
             if self.manager.selected == nil {
                 return self.manager.defaultColor
@@ -53,14 +53,14 @@ struct ColorPicker: View {
         }
     }
     
-    func select(_ id: UUID) {
+    private func select(_ id: UUID) {
         if self.manager.selected == id {
             self.manager.selected = nil
         } else {
             self.manager.selected = id
         }
     }
-    var pallette: some View {
+    private var pallette: some View {
         ScrollView(.horizontal, showsIndicators: true) {
             HStack(spacing: 0) {
                 ForEach(self.colors) { (color)  in
@@ -74,31 +74,31 @@ struct ColorPicker: View {
             }
         }
     }
-    var formulationPicker: some View {
+    private var formulationPicker: some View {
         Picker(selection: self.selectedColor.colorFormulation, label: Text("Color Formulation")) {
             ForEach(ColorToken.ColorFormulation.allCases) { (formulation)  in
                 Text(formulation.rawValue).tag(formulation)
             }
         }.pickerStyle(SegmentedPickerStyle())
     }
-    var rgbColorSpacePicker: some View {
+    private var rgbColorSpacePicker: some View {
         Picker(selection: self.selectedColor.rgbColorSpace, label: Text("")) {
             ForEach(ColorToken.RGBColorSpace.allCases) { space in
                 Text(space.rawValue).tag(space)
             }
         }.pickerStyle(SegmentedPickerStyle())
     }
-    var rgbPicker: some View {
+    private var rgbPicker: some View {
         VStack {
             rgbColorSpacePicker
             Spacer()
-            RGBColorPicker(color: self.selectedColor)
+            RGBColorPicker(self.selectedColor)
         }.padding(.vertical, 10)
     }
-    var hsbPicker: some View {
-        HSBColorPicker(color: self.selectedColor)
+    private var hsbPicker: some View {
+        HSBColorPicker(self.selectedColor)
     }
-    var currentColorPicker: some View {
+    private var currentColorPicker: some View {
         Group {
             if self.selectedColor.colorFormulation.wrappedValue == .rgb {
                 rgbPicker
@@ -107,18 +107,19 @@ struct ColorPicker: View {
             } else if self.selectedColor.colorFormulation.wrappedValue == .cmyk {
                 CMYKColorPicker(self.selectedColor)
             } else if self.selectedColor.colorFormulation.wrappedValue == .gray {
-                GrayScaleSlider(color: self.selectedColor).frame(height: 40)
+                GrayScaleSlider(self.selectedColor)
+                    .frame(height: 40)
             }
         }.frame(height: 300)
     }
-    var buttons: some View {
+    private var buttons: some View {
         HStack {
             Button(action: self.manager.delete, label: {Image(systemName: "xmark").resizable().aspectRatio(contentMode: .fit)})
             Button(action: self.manager.add, label: {Image(systemName: "plus").resizable().aspectRatio(contentMode: .fit)})
         }
     }
     
-    var body: some View {
+    public var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 5)
                 .fill(self.selectedColor.wrappedValue.color)

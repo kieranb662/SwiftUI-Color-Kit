@@ -210,7 +210,7 @@ public struct RadialGradientPicker: View {
         .coordinateSpace(name: self.space)
     }
     
-   public  var body: some View {
+   public var body: some View {
         VStack(spacing: 0) {
             ZStack {
                 GeometryReader { proxy in
