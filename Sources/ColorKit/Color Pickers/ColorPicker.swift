@@ -32,6 +32,9 @@ public struct ColorPickerButton: ButtonStyle {
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct ColorPicker: View {
     @ObservedObject public var manager: ColorManager
+    public init(_ manager: ObservedObject<ColorManager>) {
+        self._manager = manager
+    }
   
     private var colors: [ColorToken] {
         Array(self.manager.colors.values).sorted(by: {$0.dateCreated > $1.dateCreated})
@@ -126,7 +129,7 @@ public struct ColorPicker: View {
             pallette
             formulationPicker
             currentColorPicker
-            AlphaSlider(color: self.selectedColor)
+            AlphaSlider(self.selectedColor)
                 .frame(height: 40)
                 .padding(.bottom, 10)
             buttons

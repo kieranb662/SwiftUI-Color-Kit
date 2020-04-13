@@ -59,6 +59,15 @@ public struct AlphaSlider: View {
     @Binding public var color: ColorToken
     public var sliderHeight: CGFloat = 40
     
+    public init(_ color: Binding<ColorToken>) {
+        self._color = color
+    }
+    
+    public init(_ color: Binding<ColorToken>, sliderHeight: CGFloat) {
+        self._color = color
+        self.sliderHeight = sliderHeight
+    }
+    
     public var body: some View {
         LSlider(Binding(get: { self.color.alpha }, set: { self.color = self.color.update(alpha: $0) }))
             .linearSliderStyle(AlphaSliderStyle(color: color, sliderHeight: sliderHeight))

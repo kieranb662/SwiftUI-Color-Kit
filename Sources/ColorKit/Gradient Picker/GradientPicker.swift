@@ -28,7 +28,7 @@ public struct GradientData: Identifiable {
         public var id: String {self.rawValue}
     }
     /// The type of gradient (linear, radial, angular)
-    public var type: GradientType
+    public var type: GradientType = .linear
     /// Wrapper enum for `ColorRenderingMode`
     public enum ColorRenderMode: String, CaseIterable, Identifiable {
         case linear
@@ -53,25 +53,25 @@ public struct GradientData: Identifiable {
     /// stop colors.
     public var stops: [(color: ColorToken, location:  CGFloat)]
     /// The currently selected stop if one is selected
-    public var selected: Int?
+    public var selected: Int? = nil
     
     // Linear
     /// `LinearGradient` Start Location
-    public var start: UnitPoint
+    public var start: UnitPoint = .leading
     /// `LinearGradient` End Location
-    public var end: UnitPoint
+    public var end: UnitPoint = .trailing
     // Radial
     /// `RadialGradient` Start Radius
-    var startRadius: CGFloat
+    var startRadius: CGFloat = 0
     /// `RadialGradient` End Radius
-    public var endRadius: CGFloat
+    public var endRadius: CGFloat = 200
     /// `Radial Gradient` or `Angular Gradient` center
-    public var center: UnitPoint
+    public var center: UnitPoint = .center
     // Angular
     /// `AngularGradient` Start Angle
-    public var startAngle: Double
+    public var startAngle: Double = 0
     /// `AngularGradient` End Angle
-    public var endAngle: Double
+    public var endAngle: Double = 0.5
  
     public var _stops: [Gradient.Stop] {
         self.stops.map({.init(color: $0.0.color, location: $0.1)})
@@ -104,17 +104,38 @@ public struct GradientData: Identifiable {
     /// A Convienient default value
     public static let defaultValue: GradientData = {
         GradientData(name: "name",
-                     type: .linear,
-                     stops: [( ColorToken(r: 1, g: 0, b: 0),  0.3), (ColorToken(r: 0.8, g: 0.3, b: 0.3), 0.7)],
-                     selected: nil,
-                     start: .leading,
-                     end: .trailing,
-                     startRadius: 0,
-                     endRadius: 50,
-                     center: .center,
-                     startAngle: 0,
-                     endAngle: 0.9)
+                     stops: [( ColorToken(r: 1, g: 0, b: 0),  0.3), (ColorToken(r: 0.8, g: 0.3, b: 0.3), 0.7)])
     }()
+    
+    public init(name: String, stops: [(ColorToken, CGFloat)]) {
+        self.name = name
+        self.stops = stops
+    }
+    
+    
+    public init(name: String, stops: [(ColorToken, CGFloat)], startPoint: UnitPoint, endPoint: UnitPoint) {
+        self.name = name
+        self.stops = stops
+        self.start = startPoint
+        self.end = endPoint
+        self.type = .linear
+    }
+    public init(name: String, stops: [(ColorToken, CGFloat)], center: UnitPoint, startRadius: CGFloat, endRadius: CGFloat) {
+        self.name = name
+        self.stops = stops
+        self.center = center
+        self.startRadius = startRadius
+        self.endRadius = endRadius
+        self.type = .radial
+    }
+    public init(name: String, stops: [(ColorToken, CGFloat)], center: UnitPoint, startAngle: Double, endAngle: Double) {
+        self.name = name
+        self.stops = stops
+        self.center = center
+        self.startAngle = startAngle
+        self.endAngle = endAngle
+        self.type = .angular
+    }
 }
 // MARK: Gradient Manager
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
@@ -137,6 +158,9 @@ public class GradientManager: ObservableObject {
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct GradientPicker: View {
     @ObservedObject public var manager: GradientManager
+    public init(_ manager: ObservedObject<GradientManager>) {
+        self._manager = manager
+    }
     
     private var toolToggle: some View {
         Toggle(isOn: $manager.hideTools,
