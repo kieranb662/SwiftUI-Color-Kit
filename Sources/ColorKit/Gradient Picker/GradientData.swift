@@ -25,7 +25,7 @@ public struct GradientData: Identifiable {
     /// Wrapper enum for `ColorRenderingMode`
     public enum ColorRenderMode: String, CaseIterable, Identifiable {
         case linear
-        case extendedLinear
+        case extendedLinear = "extended"
         case nonLinear
         
         public var id: String { self.rawValue }

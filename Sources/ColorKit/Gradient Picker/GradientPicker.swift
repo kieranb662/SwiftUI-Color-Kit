@@ -39,7 +39,7 @@ public struct GradientPicker: View {
     }
     private var typePicker: some View {
         HStack {
-            Text("Gradient")
+            Text("Gradient").frame(width: 80)
             Picker("Gradient", selection: $manager.gradient.type) {
                 ForEach(GradientData.GradientType.allCases, id: \.self) { (type) in
                     Text(type.rawValue).tag(type)
@@ -49,7 +49,7 @@ public struct GradientPicker: View {
     }
     private var renderModePicker: some View {
         HStack {
-            Text("Render Mode")
+            Text("Render Mode").frame(width: 80)
             Picker("Render Mode", selection: $manager.gradient.renderMode) {
                 ForEach(GradientData.ColorRenderMode.allCases, id: \.self) { (type) in
                     Text(type.rawValue).tag(type)
@@ -71,9 +71,9 @@ public struct GradientPicker: View {
     
     public var body: some View {
         VStack {
-            typePicker
-            renderModePicker
-            toolToggle
+            typePicker.padding(.horizontal, 40)
+            renderModePicker.padding(.horizontal, 40)
+            toolToggle.padding(.horizontal, 40)
             currentPicker
                 .frame(idealHeight: 400, maxHeight: 500)
                 .padding(35)
