@@ -348,6 +348,26 @@ public struct ColorToken: Identifiable {
         self.alpha = opacity
         self.colorFormulation = .gray
     }
+    public init(_ token: ColorToken) {
+        self.id = .init()
+        self.dateCreated = .init()
+        self.name = token.name
+        self.alpha = token.alpha
+        self.white = token.white
+        self.rgbColorSpace = token.rgbColorSpace
+        self.colorFormulation = token.colorFormulation
+        self.red = token.red
+        self.green = token.green
+        self.blue = token.blue
+        self.hue = token.hue
+        self.saturation = token.saturation
+        self.brightness = token.brightness
+        self.cyan = token.cyan
+        self.magenta = token.magenta
+        self.yellow = token.yellow
+        self.keyBlack = token.keyBlack
+        
+    }
     
 }
 
