@@ -89,11 +89,12 @@ public struct RadialStop: View {
 ///
 /// A Component view used to create and style a `RadialGradient` to the users liking
 /// The sub components that make up the gradient picker are
-/// 1. **Center Thumb**: A draggable view representing the center of the gradient
-/// 2. **StartHandle**: A draggable circle representing the start radius  that grows larger/small as you drag away/closer from the center thumb
-/// 3. **EndHandle**: A draggable circle representing the end radius  that grows larger/small as you drag away/closer from the center thumb
-/// 4. **RadialStop**: A draggable view contained to the gradient bar, represents the unit location of the stop
-/// 5. **Gradient Bar**: A slider like container filled with a linear gradient created with the gradient stops.
+/// 1. **Gradient**: The Radial Gradient containing view
+/// 2. **Center Thumb**: A draggable view representing the center of the gradient
+/// 3. **StartHandle**: A draggable circle representing the start radius  that grows larger/small as you drag away/closer from the center thumb
+/// 4. **EndHandle**: A draggable circle representing the end radius  that grows larger/small as you drag away/closer from the center thumb
+/// 5. **RadialStop**: A draggable view contained to the gradient bar, represents the unit location of the stop
+/// 6. **Gradient Bar**: A slider like container filled with a linear gradient created with the gradient stops.
 ///
 /// - important: You must create a `GradientManager` `ObservedObject` and then apply it to the `RadialGradientPicker`
 ///   or the view containing it using the `environmentObject` method

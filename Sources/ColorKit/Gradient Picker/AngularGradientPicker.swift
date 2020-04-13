@@ -101,10 +101,11 @@ public struct AngularStop: View {
 ///
 /// A Component view used to create and style an `AngularGradient` to the users liking
 ///  The sub components that make up the gradient picker are
-///  1. **Center Thumb**: A draggable view representing the location of the gradients center
-///  2. **Start Handle**: A draggable view representing the start location of the gradient
-///  3. **End Handle**: A draggable view representing the end location of the gradient
-///  4. **AngularStop**: A draggable view  representing a gradient stop that is constrained to be between the current stop and end angles locations
+///  1. **Gradient**: The Angular Gradient containing view 
+///  2. **Center Thumb**: A draggable view representing the location of the gradients center
+///  3. **Start Handle**: A draggable view representing the start location of the gradient
+///  4. **End Handle**: A draggable view representing the end location of the gradient
+///  5. **AngularStop**: A draggable view  representing a gradient stop that is constrained to be between the current stop and end angles locations
 ///
 /// - important: You must create a `GradientManager` `ObservedObject` and then apply it to the `AngularGradientPicker`
 ///   or the view containing it using the `environmentObject` method
