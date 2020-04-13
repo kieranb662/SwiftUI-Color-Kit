@@ -72,7 +72,7 @@ public struct ColorPicker: View {
                         .frame(width: 50, height: 50)
                         .onTapGesture {
                             self.select(color.id)
-                    }
+                    }.border(self.manager.selected == color.id ? Color.blue : Color.clear)
                 }
             }
         }
@@ -117,9 +117,19 @@ public struct ColorPicker: View {
     }
     private var buttons: some View {
         HStack {
-            Button(action: self.manager.delete, label: {Image(systemName: "xmark").resizable().aspectRatio(contentMode: .fit)})
-            Button(action: self.manager.add, label: {Image(systemName: "plus").resizable().aspectRatio(contentMode: .fit)})
-        }
+            Button(action: self.manager.delete, label: {
+                Image(systemName: "xmark")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                
+            })
+            Button(action: self.manager.add, label: {
+                Image(systemName: "plus")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                
+            })
+        }.frame(height: 30)
     }
     
     public var body: some View {

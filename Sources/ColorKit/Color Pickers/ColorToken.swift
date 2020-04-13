@@ -68,9 +68,9 @@ public struct ColorToken: Identifiable {
         case .hsb:
             return Color(hue: self.hue, saturation: self.saturation, brightness: self.brightness, opacity: self.alpha)
         case .cmyk:
-            return Color(PlatformColor(cmyk: (CGFloat(self.cyan), CGFloat(self.magenta), CGFloat(self.yellow), CGFloat(self.keyBlack))))
+            return Color(PlatformColor(cmyk: (CGFloat(self.cyan), CGFloat(self.magenta), CGFloat(self.yellow), CGFloat(self.keyBlack)))).opacity(alpha)
         case .gray:
-            return Color(white: self.white)
+            return Color(white: self.white).opacity(alpha)
         }
     }
     

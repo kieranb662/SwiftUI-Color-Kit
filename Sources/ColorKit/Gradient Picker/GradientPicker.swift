@@ -200,7 +200,6 @@ public struct GradientPicker: View {
             currentPicker
                 .frame(idealHeight: 400, maxHeight: 500)
                 .padding(35)
-            
         }
     }
 }
