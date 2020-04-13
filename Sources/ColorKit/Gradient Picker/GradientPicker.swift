@@ -35,18 +35,24 @@ public struct GradientPicker: View {
                label: {Text(!self.manager.hideTools ? "Hide Tools" : "Show Tools")})
     }
     private var typePicker: some View {
-        Picker("Gradient", selection: $manager.gradient.type) {
-            ForEach(GradientData.GradientType.allCases, id: \.self) { (type) in
-                Text(type.rawValue).tag(type)
-            }
-        }.pickerStyle(SegmentedPickerStyle())
+        HStack {
+            Text("Gradient")
+            Picker("Gradient", selection: $manager.gradient.type) {
+                ForEach(GradientData.GradientType.allCases, id: \.self) { (type) in
+                    Text(type.rawValue).tag(type)
+                }
+            }.pickerStyle(SegmentedPickerStyle())
+        }
     }
     private var renderModePicker: some View {
-        Picker("Render Mode", selection: $manager.gradient.renderMode) {
-            ForEach(GradientData.ColorRenderMode.allCases, id: \.self) { (type) in
-                Text(type.rawValue).tag(type)
-            }
-        }.pickerStyle(SegmentedPickerStyle())
+        HStack {
+            Text("Render Mode")
+            Picker("Render Mode", selection: $manager.gradient.renderMode) {
+                ForEach(GradientData.ColorRenderMode.allCases, id: \.self) { (type) in
+                    Text(type.rawValue).tag(type)
+                }
+            }.pickerStyle(SegmentedPickerStyle())
+        }
     }
     private var currentPicker: some View {
         Group {
