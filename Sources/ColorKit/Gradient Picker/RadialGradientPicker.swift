@@ -63,12 +63,12 @@ public struct RadialStop: View {
                             .onTapGesture { self.select() }
                             .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .named(self.space))
                                 .onChanged({
-                                self.stop.location = max(min($0.location.x/proxy.size.width, 1),0)
-                                self.isActive = true
-                            }).onEnded({
-                                self.stop.location = max(min($0.location.x/proxy.size.width, 1),0)
-                                self.isActive = false
-                            }))
+                                    self.stop.location = max(min($0.location.x/proxy.size.width, 1),0)
+                                    self.isActive = true
+                                }).onEnded({
+                                    self.stop.location = max(min($0.location.x/proxy.size.width, 1),0)
+                                    self.isActive = false
+                                }))
                     })
                 
                 
@@ -105,29 +105,34 @@ public struct RadialStop: View {
 ///  apply it by calling the `radialGradientPickerStyle` method on the `RadialGradientPicker` or a view containing it.
 ///
 ///  ```
-///        public struct <#My Picker Style#>: RadialGradientPickerStyle {
+///        struct <#My Picker Style#>: RadialGradientPickerStyle {
 ///
-///            public func makeCenter(configuration: GradientCenterConfiguration) -> some View {
+///             func makeGradient(gradient: RadialGradient) -> some View {
+///                 RoundedRectangle(cornerRadius: 5)
+///                     .fill(gradient)
+///                     .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.white))
+///             }
+///            func makeCenter(configuration: GradientCenterConfiguration) -> some View {
 ///                Circle().fill(configuration.isActive ? Color.yellow : Color.white)
 ///                    .frame(width: 35, height: 35)
 ///                    .opacity(configuration.isHidden ? 0 : 1)
 ///                    .animation(.easeIn)
 ///            }
-///            public func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
+///            func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
 ///                Circle()
 ///                    .stroke(Color.white.opacity(0.001), style: StrokeStyle(lineWidth: 10))
 ///                    .overlay(Circle().stroke(Color.black, style: StrokeStyle(lineWidth: 1, dash: [10, 5])))
 ///                    .opacity(configuration.isHidden ? 0 : 1)
 ///                    .animation(.easeIn)
 ///            }
-///            public func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
+///            func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
 ///                Circle()
 ///                    .stroke(Color.white.opacity(0.001), style: StrokeStyle(lineWidth: 10))
 ///                    .overlay(Circle().stroke(Color.white, style: StrokeStyle(lineWidth: 1, dash: [10, 5])))
 ///                    .opacity(configuration.isHidden ? 0 : 1)
 ///                    .animation(.easeIn)
 ///            }
-///            public func makeStop(configuration: GradientStopConfiguration) -> some View {
+///            func makeStop(configuration: GradientStopConfiguration) -> some View {
 ///                Group {
 ///                    if !configuration.isHidden {
 ///                        RoundedRectangle(cornerRadius: 5)
@@ -140,7 +145,7 @@ public struct RadialStop: View {
 ///                    }
 ///                }
 ///            }
-///            public func makeBar(configuration: RadialGradientBarConfiguration) -> some View {
+///            func makeBar(configuration: RadialGradientBarConfiguration) -> some View {
 ///                Group {
 ///                    if !configuration.isHidden {
 ///                        RoundedRectangle(cornerRadius: 5)
@@ -163,7 +168,7 @@ public struct RadialGradientPicker: View {
     @State private var endState: Double = 0 // Value on [0,1] representing the current dragging of the end handle
     private let space: String = "Radial Gradient"  // Indentifier used to denote the pickers coordinate space
     public init() {}
-   // The current Unit location of the center thumb
+    // The current Unit location of the center thumb
     private func currentCenter(_ proxy: GeometryProxy) -> UnitPoint {
         let x = manager.gradient.center.x + centerState.width/proxy.size.width
         let y = manager.gradient.center.y + centerState.height/proxy.size.height
@@ -179,10 +184,10 @@ public struct RadialGradientPicker: View {
     // MARK: Views
     // Creates the radial gradient
     private func makeGradient(_ proxy: GeometryProxy) ->  some View {
-        RadialGradient(gradient: self.manager.gradient.gradient,
-                       center: self.currentCenter(proxy),
-                       startRadius: self.manager.gradient.startRadius + CGFloat(self.startState),
-                       endRadius: self.manager.gradient.endRadius + CGFloat(self.endState))
+        style.makeGradient(gradient: RadialGradient(gradient: self.manager.gradient.gradient,
+                                                    center: self.currentCenter(proxy),
+                                                    startRadius: self.manager.gradient.startRadius + CGFloat(self.startState),
+                                                    endRadius: self.manager.gradient.endRadius + CGFloat(self.endState)))
             .drawingGroup(opaque: false, colorMode: self.manager.gradient.renderMode.renderingMode)
             .animation(.linear)
     }
@@ -227,7 +232,7 @@ public struct RadialGradientPicker: View {
         .coordinateSpace(name: self.space)
     }
     
-   public var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             ZStack {
                 GeometryReader { proxy in

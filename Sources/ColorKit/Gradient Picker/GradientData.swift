@@ -10,6 +10,7 @@ import SwiftUI
 
 
 /// A Token representing the composite data from `LinearGradient`, `RadialGradient`, and `AngularGradient` parameters
+/// When finished designing the gradient just access the `swiftUIFile` value and copy/paste it into your project. 
 @available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct GradientData: Identifiable {
     
@@ -118,7 +119,8 @@ public struct GradientData: Identifiable {
     /// A Convienient default value
     public static let defaultValue: GradientData = {
         GradientData(name: "name",
-                     stops: [.init(color: ColorToken(r: 1, g: 0, b: 0), location: 0.3), .init(color: ColorToken(r: 0.8, g: 0.3, b: 0.3), location: 0.7)])
+                     stops: [.init(color: ColorToken(colorSpace: .sRGB, r: 252/255, g: 70/255, b: 107/255, a: 1), location: 0),
+                             .init(color: ColorToken(colorSpace: .sRGB, r: 63/255, g: 94/255, b: 251/255, a: 1), location: 1)])
     }()
     
     public init(name: String, stops: [Stop]) {

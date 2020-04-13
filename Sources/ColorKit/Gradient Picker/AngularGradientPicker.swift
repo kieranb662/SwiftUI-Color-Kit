@@ -116,14 +116,19 @@ public struct AngularStop: View {
 /// apply it by calling the `angularGradientPickerStyle` method on the `AngularGradientPicker` or a view containing it.
 ///
 /// ```
-///      public struct <#My Picker Style#>: AngularGradientPickerStyle {
+///      struct <#My Picker Style#>: AngularGradientPickerStyle {
 ///
-///          public func makeCenter(configuration: GradientCenterConfiguration) -> some View {
+///         func makeGradient(gradient: AngularGradient) -> some View {
+///             RoundedRectangle(cornerRadius: 5)
+///                 .fill(gradient)
+///                 .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.white))
+///         }
+///          func makeCenter(configuration: GradientCenterConfiguration) -> some View {
 ///              Circle().fill(configuration.isActive ? Color.yellow : Color.white)
 ///                  .frame(width: 35, height: 35)
 ///                  .opacity(configuration.isHidden ? 0 : 1)
 ///          }
-///          public func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
+///          func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
 ///              Capsule()
 ///                  .foregroundColor(Color.white)
 ///                  .frame(width: 30, height: 75)
@@ -132,7 +137,7 @@ public struct AngularStop: View {
 ///                  .shadow(radius: 3)
 ///                  .opacity(configuration.isHidden ? 0 : 1)
 ///          }
-///          public func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
+///          func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
 ///              Capsule()
 ///                  .foregroundColor(Color.white)
 ///                  .frame(width: 30, height: 75)
@@ -141,7 +146,7 @@ public struct AngularStop: View {
 ///                  .shadow(radius: 3)
 ///                  .opacity(configuration.isHidden ? 0 : 1)
 ///          }
-///          public func makeStop(configuration: GradientStopConfiguration) -> some View {
+///          func makeStop(configuration: GradientStopConfiguration) -> some View {
 ///              Group {
 ///                  if !configuration.isHidden {
 ///                      Circle()
@@ -208,10 +213,10 @@ public struct AngularGradientPicker: View {
     // MARK:  Views
     // Creates the Angular Gradient
     private func gradient(_ proxy: GeometryProxy) -> some View {
-        AngularGradient(gradient: self.manager.gradient.gradient,
-                        center: self.currentCenter(proxy),
-                        startAngle: Angle(radians: self.currentStates.start*2 * .pi),
-                        endAngle: Angle(radians: self.currentStates.end*2 * .pi))
+        style.makeGradient(gradient: AngularGradient(gradient: self.manager.gradient.gradient,
+                                                     center: self.currentCenter(proxy),
+                                                     startAngle: Angle(radians: self.currentStates.start*2 * .pi),
+                                                     endAngle: Angle(radians: self.currentStates.end*2 * .pi)))
             .drawingGroup(opaque: false, colorMode: self.manager.gradient.renderMode.renderingMode)
             .animation(.linear)
     }
@@ -276,7 +281,7 @@ public struct AngularGradientPicker: View {
                         start: self.currentStates.start,
                         end: self.endState + self.manager.gradient.endAngle,
                         center: self.currentCenter(proxy))
-                
+            
         }.position(self.currentCenter(proxy))
     }
     

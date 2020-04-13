@@ -87,9 +87,10 @@ public struct LinearStop: View {
 ///
 /// A Component view used to create and style a `Linear Gradient` to the users liking
 ///  The sub components that make up the gradient picker are
-///  1. Start Handle: A draggable view representing the start location of the gradient
-///  2. End Handle: A draggable view representing the end location of the gradient
-///  3. LinearStop: A draggable view  representing a gradient stop that is constrained to be located within the start and and handles locations
+///  1. Gradient: The Linear gradient containing view
+///  2 Start Handle: A draggable view representing the start location of the gradient
+///  3. End Handle: A draggable view representing the end location of the gradient
+///  4. LinearStop: A draggable view  representing a gradient stop that is constrained to be located within the start and and handles locations
 ///
 /// - important: You must create a `GradientManager` `ObservedObject` and then apply it to the `LinearGradientPicker`
 ///   or the view containing it using the `environmentObject` method
@@ -100,8 +101,14 @@ public struct LinearStop: View {
 ///  apply it by calling the `linearGradientPickerStyle` method on the `LinearGradientPicker` or a view containing it.
 ///
 /// ```
-///      public struct <#My Picker Style#>: LinearGradientPickerStyle {
-///          public func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
+///      struct <#My Picker Style#>: LinearGradientPickerStyle {
+///
+///         func makeGradient(gradient: LinearGradient) -> some View {
+///                RoundedRectangle(cornerRadius: 5)
+///                    .fill(gradient)
+///                    .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.white))
+///            }
+///          func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
 ///              Capsule()
 ///                  .foregroundColor(Color.white)
 ///                  .frame(width: 25, height: 75)
@@ -110,7 +117,7 @@ public struct LinearStop: View {
 ///                  .shadow(radius: 3)
 ///                  .opacity(configuration.isHidden ? 0 : 1)
 ///          }
-///          public func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
+///          func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
 ///              Capsule()
 ///                  .foregroundColor(Color.white)
 ///                  .frame(width: 25, height: 75)
@@ -119,7 +126,7 @@ public struct LinearStop: View {
 ///                  .shadow(radius: 3)
 ///                  .opacity(configuration.isHidden ? 0 : 1)
 ///          }
-///          public func makeStop(configuration: GradientStopConfiguration) -> some View {
+///          func makeStop(configuration: GradientStopConfiguration) -> some View {
 ///              Capsule()
 ///                  .foregroundColor(configuration.color)
 ///                  .frame(width: 20, height: 55)
@@ -211,9 +218,10 @@ public struct LinearGradientPicker: View {
     // MARK: Views
     /// Makes The Linear Gradient
     private func makeGradient(_ proxy: GeometryProxy) -> some View {
-        LinearGradient(gradient: self.manager.gradient.gradient,
-                       startPoint: self.currentUnitStart(proxy),
-                       endPoint: self.currentUnitEnd(proxy))
+        style.makeGradient(gradient: LinearGradient(gradient: self.manager.gradient.gradient,
+                                                    startPoint: self.currentUnitStart(proxy),
+                                                    endPoint: self.currentUnitEnd(proxy)))
+            
             .drawingGroup(opaque: false, colorMode: self.manager.gradient.renderMode.renderingMode)
             .animation(.interactiveSpring())
     }
