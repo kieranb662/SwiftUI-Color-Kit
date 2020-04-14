@@ -52,7 +52,7 @@ Adding **Color Kit** as a dependency to an existing project
 1. Copy that URL from the github repo
 2. In Xcode -> File -> Swift Packages -> Add Package Dependencies
 3. Paste the URL Into the box
-4. Specify the minimum version number 1.0.0
+4. Specify the minimum version number 1.0.2
 5. Add `import ColorKit` to the top of the file you are adding a picker to.
 6. Follow the implementation steps for the picker you wish to use (these will generally be found in the top level comments for the picker, you can also find them in the readme)
 
