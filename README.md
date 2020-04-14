@@ -14,14 +14,7 @@
 
 
 <p align="center">
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=sun_65eJMGs" target="blank">
-<img src="ColorKitMedia/ColorPickerThumbnail.gif"
-alt="Color Picker Example" height="500" border="" />
-</a>
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=wOVn3HbjiCU" target="blank">
-<img src="ColorKitMedia/GradientPickerThumbnail.gif"
-alt="Color Picker Example" height="500" border="" />
-</a>
+<img src="ColorKitMedia/ExampleCollage.png" alt="Example Collage" border="2" width=200/>
 </p>
 
 ## Why Use Color Kit?
