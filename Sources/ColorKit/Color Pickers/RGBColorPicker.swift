@@ -20,6 +20,7 @@ public struct RGBSliderStyle: LSliderStyle {
     public var sliderHeight: CGFloat
     public var type: ColorType
     public var color: ColorToken
+    // Creates two colors based upon what the color would look like if the value of the slider was dragged all the way left or all the way right
     private var colors: [Color] {
         switch type {
         case .red:
