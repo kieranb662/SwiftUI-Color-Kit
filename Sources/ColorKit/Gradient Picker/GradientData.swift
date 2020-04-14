@@ -100,7 +100,7 @@ public struct GradientData: Identifiable {
     public var gradientFile: String {
         var file: String = "Gradient(stops: ["
         for stop in stops.sorted(by: {$0.location < $1.location}) {
-            file.append(" .init(color: Color(.\(stop.color.rgbColorSpace.rawValue), red: \(String(format: "%.3f", stop.color.red)), green: \(String(format: "%.3f", stop.color.green)), blue: \(String(format: "%.3f", stop.color.blue)), opacity: \(String(format: "%.3f", stop.color.alpha))), location: \(String(format: "%.3f", stop.location))),")
+            file.append(" .init(color: \(stop.color.fileFormat), location: \(String(format: "%.3f", stop.location))),")
         }
         
         return file.dropLast() + "])"

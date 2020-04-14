@@ -74,6 +74,19 @@ public struct ColorToken: Identifiable {
         }
     }
     
+    public var fileFormat: String {
+        switch colorFormulation {
+        case .rgb:
+            return "Color(.\(self.rgbColorSpace.space), red: \(self.red), green: \(self.green), blue: \(self.blue), opacity: \(self.alpha))"
+        case .hsb:
+            return "Color(hue: \(self.hue), saturation: \(self.saturation), brightness: \(self.brightness), opacity: \(self.alpha))"
+        case .cmyk:
+            return "Color(PlatformColor(cmyk: (\(self.cyan), \(self.magenta), \(self.yellow), \(self.keyBlack)))).opacity(\(alpha))"
+        case .gray:
+            return "Color(white: \(self.white).opacity(\(alpha))"
+        }
+    }
+    
     internal init(id: UUID,
                   date: Date,
                   name: String,
@@ -133,46 +146,57 @@ public struct ColorToken: Identifiable {
     
     public mutating func update(white: Double)  -> ColorToken {
         self.white = white
+        self.colorFormulation = .gray
         return self.update()
     }
     public mutating func update(red: Double) -> ColorToken {
         self.red = red
+        self.colorFormulation = .rgb
         return self.update()
     }
     public mutating func update(green: Double) -> ColorToken {
         self.green = green
+        self.colorFormulation = .rgb
         return self.update()
     }
     public mutating func update(blue: Double) -> ColorToken {
         self.blue = blue
+        self.colorFormulation = .rgb
         return self.update()
     }
     public mutating func update(hue: Double) -> ColorToken {
         self.hue = hue
+        self.colorFormulation = .hsb
         return self.update()
     }
     public mutating func update(saturation: Double) -> ColorToken {
         self.saturation = saturation
+        self.colorFormulation = .hsb
         return self.update()
     }
     public mutating func update(brightness: Double) -> ColorToken {
         self.brightness = brightness
+        self.colorFormulation = .hsb
         return self.update()
     }
     public mutating func update(cyan: Double) -> ColorToken {
         self.cyan = cyan
+        self.colorFormulation = .cmyk
         return self.update()
     }
     public mutating func update(magenta: Double) -> ColorToken {
         self.magenta = magenta
+        self.colorFormulation = .cmyk
         return self.update()
     }
     public mutating func update(yellow: Double) -> ColorToken {
         self.yellow = yellow
+        self.colorFormulation = .cmyk
         return self.update()
     }
     public mutating func update(keyBlack: Double) -> ColorToken {
         self.keyBlack = keyBlack
+        self.colorFormulation = .cmyk
         return self.update()
     }
     public mutating func update(alpha: Double) -> ColorToken {
