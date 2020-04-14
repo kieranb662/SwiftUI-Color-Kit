@@ -59,7 +59,7 @@ Adding **Color Kit** as a dependency to an existing project
 
 ### Method 2
 
-Clone the example project and play around with all the different examples to get a feel for the library. If you are really feeling adventurous try making your own custom styles for one of the gradient pickers. Its super easy and **Color Kit** even comes with snippets to help get you started.
+Clone the [example project](https://github.com/kieranb662/Color-Kit-Examples) and play around with all the different examples to get a feel for the library. If you are really feeling adventurous try making your own custom styles for one of the gradient pickers. Its super easy and **Color Kit** even comes with snippets to help get you started.
 
 
 ## Components
