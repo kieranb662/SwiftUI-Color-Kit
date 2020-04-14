@@ -14,7 +14,7 @@
 
 
 <p align="center">
-<img src="ColorKitMedia/ExampleCollage.png" alt="Example Collage" border="2" width=200/>
+<img src="ColorKitMedia/ExampleCollage.png" alt="Example Collage" border="2" height=540/>
 </p>
 
 ## Why Use Color Kit?
