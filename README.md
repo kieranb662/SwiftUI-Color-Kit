@@ -165,7 +165,7 @@ The sub components that make up the gradient picker are
 4. **LinearStop**: A draggable view  representing a gradient stop that is constrained to be located within the start and and handles locations
 
 <p align="center">
-<img src="ColorKitMedia/LinearComponentBreakdown.png" alt="Linear Gradient Picker Breakdown" border="2" height=250/>
+<img src="ColorKitMedia/LinearComponentBreakDown.png" alt="Linear Gradient Picker Breakdown" border="2" height=250/>
 
 **Important**: You must create a `GradientManager` `ObservedObject` and then apply it to the `LinearGradientPicker` or the view containing it using the `environmentObject` method
 
@@ -233,7 +233,7 @@ In order to style the picker you must create a struct that conforms to the `Line
  6. **Gradient Bar**: A slider like container filled with a linear gradient created with the gradient stops.
 
  <p align="center">
- <img src="ColorKitMedia/RadialComponentBreakdown.png" alt="Radial Gradient Picker Breakdown" border="2" width = 350/>
+ <img src="ColorKitMedia/RadialComponentBreakDown.png" alt="Radial Gradient Picker Breakdown" border="2" width = 350/>
 
  **Important**: You must create a `GradientManager` `ObservedObject` and then apply it to the `RadialGradientPicker`
    or the view containing it using the `environmentObject` method
@@ -241,7 +241,7 @@ In order to style the picker you must create a struct that conforms to the `Line
 
   ## Styling The Picker
  In order to style the picker you must create a struct that conforms to the `RadialGradientPickerStyle` protocol. Conformance requires the implementation of
-  5 separate methods. To make this easier just copy and paste the following style based on the `DefaultRadialGradientPickerStyle`. After creating your custom style
+  6 separate methods. To make this easier just copy and paste the following style based on the `DefaultRadialGradientPickerStyle`. After creating your custom style
   apply it by calling the `radialGradientPickerStyle` method on the `RadialGradientPicker` or a view containing it.
 
 ````Swift
