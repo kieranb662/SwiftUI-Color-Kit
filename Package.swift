@@ -15,8 +15,8 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/colejd/Sliders-SwiftUI.git" , from: "1.0.3"),
-        .package(url: "https://github.com/colejd/SwiftUI-Shapes.git", from: "1.0.4"),
+        .package(url: "https://github.com/colejd/Sliders-SwiftUI.git", branch: "master"),
+        .package(url: "https://github.com/colejd/SwiftUI-Shapes.git", branch: "master"),
         .package(url: "https://github.com/kieranb662/CGExtender.git", from: "1.0.3")
     ],
     targets: [
