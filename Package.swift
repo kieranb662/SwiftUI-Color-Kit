@@ -16,7 +16,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/colejd/Sliders-SwiftUI.git" , from: "1.0.3"),
-        .package(url: "https://github.com/kieranb662/SwiftUI-Shapes.git", from: "1.0.4"),
+        .package(url: "https://github.com/colejd/SwiftUI-Shapes.git", from: "1.0.4"),
         .package(url: "https://github.com/kieranb662/CGExtender.git", from: "1.0.3")
     ],
     targets: [
@@ -24,7 +24,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "ColorKit",
-            dependencies: ["CGExtender","Shapes","Sliders-SwiftUI"]),
+            dependencies: ["CGExtender","SwiftUI-Shapes","Sliders-SwiftUI"]),
         .testTarget(
             name: "ColorKitTests",
             dependencies: ["ColorKit"]),
