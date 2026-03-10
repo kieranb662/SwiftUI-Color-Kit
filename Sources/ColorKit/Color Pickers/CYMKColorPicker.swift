@@ -65,24 +65,25 @@ public struct CMYKSliderStyle: LSliderStyle {
     }
     
     public func makeTrack(configuration: LSliderConfiguration) -> some View {
-        let style: StrokeStyle = .init(lineWidth: sliderHeight, lineCap: .round)
-        return AdaptiveLine(angle: configuration.angle)
-            .stroke(
-                LinearGradient(
-                    gradient: Gradient(colors: colors),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                ),
-                style: style
-            )
-            .overlay(
-                GeometryReader { proxy in
-                    Capsule()
-                        .stroke(Color.white)
-                        .frame(width: proxy.size.width + sliderHeight)
-                        .rotationEffect(configuration.angle)
-                }
-            )
+        return GeometryReader { geo in
+            ZStack {
+                AdaptiveLine(angle: configuration.angle)
+                    .stroke(
+                        LinearGradient(
+                            gradient: Gradient(colors: colors),
+                            startPoint: .leading,
+                            endPoint: .trailing),
+                        lineWidth: sliderHeight
+                    )
+                    .mask(Capsule())
+                
+                Capsule()
+                    .stroke(Color.white)
+                    .rotationEffect(configuration.angle)
+            }
+            .frame(width: geo.size.width + sliderHeight)
+            .offset(x: -sliderHeight/2)
+        }
     }
 }
 

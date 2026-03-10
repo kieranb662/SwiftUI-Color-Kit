@@ -59,22 +59,25 @@ public struct RGBSliderStyle: LSliderStyle {
     }
     
     public func makeTrack(configuration: LSliderConfiguration) -> some View {
-        let gradient = LinearGradient(
-            gradient: Gradient(colors: colors),
-            startPoint: .leading,
-            endPoint: .trailing
-        )
-        
-        return AdaptiveLine(angle: configuration.angle)
-            .stroke(gradient, style: StrokeStyle(lineWidth: sliderHeight, lineCap: .round))
-            .overlay(
-                GeometryReader { proxy in
-                    Capsule()
-                        .stroke(Color.white)
-                        .frame(width: proxy.size.width + sliderHeight)
-                        .rotationEffect(configuration.angle)
-                }
-            )
+        return GeometryReader { geo in
+            ZStack {
+                AdaptiveLine(angle: configuration.angle)
+                    .stroke(
+                        LinearGradient(
+                            gradient: Gradient(colors: colors),
+                            startPoint: .leading,
+                            endPoint: .trailing),
+                        lineWidth: sliderHeight
+                    )
+                    .mask(Capsule())
+                
+                Capsule()
+                    .stroke(Color.white)
+                    .rotationEffect(configuration.angle)
+            }
+            .frame(width: geo.size.width + sliderHeight)
+            .offset(x: -sliderHeight/2)
+        }
     }
 }
 

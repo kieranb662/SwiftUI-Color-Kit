@@ -256,6 +256,7 @@ public struct RadialGradientPicker: View {
             }
             .aspectRatio(1, contentMode: .fit)
             .coordinateSpace(name: space)
+            
             gradientBar
         }
     }

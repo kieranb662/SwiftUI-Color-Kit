@@ -50,6 +50,7 @@ public struct AlphaSliderStyle: LSliderStyle {
                     .stroke(Color.white, lineWidth: 1)
                     .frame(width: proxy.size.width + sliderHeight)
             )
+            .offset(x: -sliderHeight/2)
         }
     }
 }

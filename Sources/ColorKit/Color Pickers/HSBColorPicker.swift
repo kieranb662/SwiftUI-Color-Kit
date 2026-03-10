@@ -20,6 +20,7 @@ public struct HueSliderStyle: LSliderStyle {
             Circle()
                 .fill(Color.white)
                 .shadow(radius: 2)
+            
             Circle()
                 .fill(Color(hue: configuration.pctFill, saturation: 1, brightness: 1))
                 .scaleEffect(0.8)
@@ -28,20 +29,25 @@ public struct HueSliderStyle: LSliderStyle {
     }
     
     public func makeTrack(configuration: LSliderConfiguration) -> some View {
-        let gradient = LinearGradient(
-            gradient: Gradient(colors: hueColors),
-            startPoint: .leading,
-            endPoint: .trailing
-        )
-        
-        return AdaptiveLine(angle: configuration.angle)
-            .stroke(gradient, style: StrokeStyle(lineWidth: sliderHeight, lineCap: .round))
-            .overlay(GeometryReader { proxy in
+        return GeometryReader { geo in
+            ZStack {
+                AdaptiveLine(angle: configuration.angle)
+                    .stroke(
+                        LinearGradient(
+                            gradient: Gradient(colors: hueColors),
+                            startPoint: .leading,
+                            endPoint: .trailing),
+                        lineWidth: sliderHeight
+                    )
+                    .mask(Capsule())
+                
                 Capsule()
                     .stroke(Color.white)
-                    .frame(width: proxy.size.width + sliderHeight)
                     .rotationEffect(configuration.angle)
-            })
+            }
+            .frame(width: geo.size.width + sliderHeight)
+            .offset(x: -sliderHeight/2)
+        }
     }
 }
 

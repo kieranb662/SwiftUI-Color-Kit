@@ -264,7 +264,6 @@ public struct LinearGradientPicker: View {
         )
         .offset(x: offsetX, y: offsetY)
         .gesture(longPressDrag)
-        
     }
     
     private func makeStops(_ proxy: GeometryProxy) -> some View {

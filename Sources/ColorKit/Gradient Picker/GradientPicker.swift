@@ -28,49 +28,66 @@ public struct GradientPicker: View {
     }
     
     private var toolToggle: some View {
-        Toggle(isOn: $manager.hideTools,
-               label: {Text(!self.manager.hideTools ? "Hide Tools" : "Show Tools")})
+        Toggle(isOn: $manager.hideTools) {
+            Text(manager.hideTools ? "Show Tools" : "Hide Tools")
+        }
     }
+    
     private var typePicker: some View {
         HStack {
-            Text("Gradient").frame(width: 80)
+            Text("Gradient")
+                .frame(width: 80)
+            
             Picker("Gradient", selection: $manager.gradient.type) {
                 ForEach(GradientData.GradientType.allCases, id: \.self) { (type) in
                     Text(type.rawValue).tag(type)
                 }
-            }.pickerStyle(SegmentedPickerStyle())
+            }
+            .pickerStyle(SegmentedPickerStyle())
         }
     }
+    
     private var renderModePicker: some View {
         HStack {
-            Text("Render Mode").frame(width: 80)
+            Text("Render Mode")
+                .frame(width: 80)
+            
             Picker("Render Mode", selection: $manager.gradient.renderMode) {
                 ForEach(GradientData.ColorRenderMode.allCases, id: \.self) { (type) in
                     Text(type.rawValue).tag(type)
                 }
-            }.pickerStyle(SegmentedPickerStyle())
+            }
+            .pickerStyle(SegmentedPickerStyle())
         }
     }
+    
+    @ViewBuilder
     private var currentPicker: some View {
-        Group {
-            if manager.gradient.type == .linear {
-                LinearGradientPicker()
-            } else if manager.gradient.type == .radial {
-                RadialGradientPicker()
-            } else {
-                AngularGradientPicker()
-            }
-        }.environmentObject(manager)
+        switch manager.gradient.type {
+        case .linear:
+            LinearGradientPicker()
+        case .radial:
+            RadialGradientPicker()
+        case .angular:
+            AngularGradientPicker()
+        }
     }
     
     public var body: some View {
         VStack {
-            typePicker.padding(.horizontal, 40)
-            renderModePicker.padding(.horizontal, 40)
-            toolToggle.padding(.horizontal, 40)
+            typePicker
+                .padding(.horizontal, 40)
+            
+            renderModePicker
+                .padding(.horizontal, 40)
+            
+            toolToggle
+                .padding(.horizontal, 40)
+            
             currentPicker
                 .frame(idealHeight: 400, maxHeight: 500)
                 .padding(35)
+                .environmentObject(manager)
         }
     }
 }

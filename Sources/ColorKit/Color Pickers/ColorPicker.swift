@@ -146,12 +146,17 @@ public struct ColorPicker: View {
         VStack {
             RoundedRectangle(cornerRadius: 5)
                 .fill(selectedColor.wrappedValue.color)
+            
             pallette
+            
             formulationPicker
+            
             currentColorPicker
+            
             AlphaSlider(selectedColor)
                 .frame(height: 40)
                 .padding(.bottom, 10)
+            
             buttons
         }
         .padding(.horizontal, 40)
