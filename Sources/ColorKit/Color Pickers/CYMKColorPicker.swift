@@ -7,30 +7,33 @@
 //
 
 import SwiftUI
-import Shapes
 import Sliders
 
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct CMYKSliderStyle: LSliderStyle {
     public var sliderHeight: CGFloat
     public var type: ColorType
     public var color: ColorToken
+    
     // Creates two colors based upon what the color would look like if the value of the slider was dragged all the way left or all the way right
     private var colors: [Color] {
         switch type {
-            
         case .cyan:
-            return [Color(PlatformColor(cmyk: (0,CGFloat(color.magenta), CGFloat(color.yellow), CGFloat(color.keyBlack) ))), Color(PlatformColor(cmyk: (1,CGFloat(color.magenta), CGFloat(color.yellow), CGFloat(color.keyBlack) )))]
+            return [Color(PlatformColor(cmyk: (0, CGFloat(color.magenta), CGFloat(color.yellow), CGFloat(color.keyBlack) ))),
+                    Color(PlatformColor(cmyk: (1, CGFloat(color.magenta), CGFloat(color.yellow), CGFloat(color.keyBlack) )))]
         case .magenta:
-            return [Color(PlatformColor(cmyk: (CGFloat(color.cyan),0, CGFloat(color.yellow), CGFloat(color.keyBlack) ))), Color(PlatformColor(cmyk: (CGFloat(color.cyan),1, CGFloat(color.yellow), CGFloat(color.keyBlack) )))]
+            return [Color(PlatformColor(cmyk: (CGFloat(color.cyan), 0, CGFloat(color.yellow), CGFloat(color.keyBlack) ))),
+                    Color(PlatformColor(cmyk: (CGFloat(color.cyan), 1, CGFloat(color.yellow), CGFloat(color.keyBlack) )))]
         case .yellow:
-            return [Color(PlatformColor(cmyk: (CGFloat(color.cyan),CGFloat(color.magenta), 0, CGFloat(color.keyBlack) ))), Color(PlatformColor(cmyk: (CGFloat(color.cyan),CGFloat(color.magenta), 1, CGFloat(color.keyBlack) )))]
+            return [Color(PlatformColor(cmyk: (CGFloat(color.cyan), CGFloat(color.magenta), 0, CGFloat(color.keyBlack) ))),
+                    Color(PlatformColor(cmyk: (CGFloat(color.cyan), CGFloat(color.magenta), 1, CGFloat(color.keyBlack) )))]
         case .black:
-            return [Color(PlatformColor(cmyk: (CGFloat(color.cyan),CGFloat(color.magenta), CGFloat(color.yellow), 0))), Color(PlatformColor(cmyk: (CGFloat(color.cyan),CGFloat(color.magenta), CGFloat(color.yellow), 1)))]
+            return [Color(PlatformColor(cmyk: (CGFloat(color.cyan), CGFloat(color.magenta), CGFloat(color.yellow), 0))),
+                    Color(PlatformColor(cmyk: (CGFloat(color.cyan), CGFloat(color.magenta), CGFloat(color.yellow), 1)))]
             
         }
     }
-    public enum ColorType: String, CaseIterable {
+    
+    public enum ColorType: String, CaseIterable, Sendable {
         case cyan
         case magenta
         case yellow
@@ -58,28 +61,36 @@ public struct CMYKSliderStyle: LSliderStyle {
             Circle()
                 .fill(currentColor)
                 .scaleEffect(0.8)
-        }.frame(width: self.sliderHeight, height: self.sliderHeight)
+        }
+        .frame(width: sliderHeight, height: sliderHeight)
     }
     
     public func makeTrack(configuration: LSliderConfiguration) -> some View {
         let style: StrokeStyle = .init(lineWidth: sliderHeight, lineCap: .round)
         return AdaptiveLine(angle: configuration.angle)
-            .stroke(LinearGradient(gradient: Gradient(colors: colors), startPoint: .leading, endPoint: .trailing), style: style)
-            .overlay(GeometryReader { proxy in
-                Capsule()
-                    .stroke(Color.white)
-                    .frame(width: proxy.size.width + self.sliderHeight)
-                    .rotationEffect(configuration.angle)
-            })
+            .stroke(
+                LinearGradient(
+                    gradient: Gradient(colors: colors),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                ),
+                style: style
+            )
+            .overlay(
+                GeometryReader { proxy in
+                    Capsule()
+                        .stroke(Color.white)
+                        .frame(width: proxy.size.width + sliderHeight)
+                        .rotationEffect(configuration.angle)
+                }
+            )
     }
-    
 }
 
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct CMYKColorPicker: View {
     @Binding public var color: ColorToken
     public var sliderHeights: CGFloat = 40
-
+    
     public init(_ color: Binding<ColorToken>) {
         self._color = color
     }
@@ -89,26 +100,28 @@ public struct CMYKColorPicker: View {
         self.sliderHeights = sliderHeights
     }
     
-    private func makeSlider( _ color: CMYKSliderStyle.ColorType) -> some View {
+    private func makeSlider( _ colorType: CMYKSliderStyle.ColorType) -> some View {
         let value: Binding<Double> =  {
-            switch color {
+            switch colorType {
             case .cyan:
-                return Binding(get: {self.color.cyan},
-                               set: {self.color = self.color.update(cyan: $0)})
+                return Binding(get: {color.cyan},
+                               set: {color = color.update(cyan: $0)})
             case .magenta:
-                return Binding(get: {self.color.magenta},
-                               set: {self.color = self.color.update(magenta: $0)})
+                return Binding(get: {color.magenta},
+                               set: {color = color.update(magenta: $0)})
             case .yellow:
-                return Binding(get: {self.color.yellow},
-                               set: {self.color = self.color.update(yellow: $0)})
+                return Binding(get: {color.yellow},
+                               set: {color = color.update(yellow: $0)})
             case .black:
-                return Binding(get: {self.color.keyBlack},
-                               set: {self.color = self.color.update(keyBlack: $0)})
+                return Binding(get: {color.keyBlack},
+                               set: {color = color.update(keyBlack: $0)})
             }
         }()
-        let style = CMYKSliderStyle(sliderHeight: sliderHeights, type: color, color: self.color)
+        
         return LSlider(value)
-            .linearSliderStyle(style)
+            .linearSliderStyle(
+                CMYKSliderStyle(sliderHeight: sliderHeights, type: colorType, color: color)
+            )
             .frame(height: sliderHeights)
     }
     

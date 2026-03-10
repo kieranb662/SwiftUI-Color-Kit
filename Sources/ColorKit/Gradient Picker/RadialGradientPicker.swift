@@ -20,7 +20,6 @@ import SwiftUI
 /// Then I used the `RadialKey` with the `anchorPreference` method to capture the bounds of the stop
 /// Finally I used `overlayPreferenceValue` to overlay a visible copy of the stop which used the invisible copie's bounds
 /// to restrict the translation of the view from being partaill dragged over either edge of the `RadialGradientPicker`'s gradient bar.
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct RadialStop: View {
     // Preference key used to grab the size of the stop and then adjust the maximum translation
     // so that the stop doesnts get partially dragged over the ends of the gradient bar
@@ -45,42 +44,37 @@ public struct RadialStop: View {
     
     func select() {
         if selected == id {
-            self.selected = nil
+            selected = nil
         } else {
-            self.selected = id
+            selected = id
         }
     }
     
     public var body: some View {
         GeometryReader { proxy in
             ZStack {
-                self.style
-                    .makeStop(configuration: self.configuration).opacity(0)
+                style
+                    .makeStop(configuration: configuration).opacity(0)
                     .anchorPreference(key: RadialKey.self, value: .bounds, transform: { proxy[$0] })
                     .overlayPreferenceValue(RadialKey.self, { (rect)  in
-                        self.style.makeStop(configuration: self.configuration)
-                            .offset(x: (self.stop.location - 0.5)*(proxy.size.width-rect.width-4), y: 0)
-                            .onTapGesture { self.select() }
-                            .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .named(self.space))
-                                .onChanged({
-                                    self.stop.location = max(min($0.location.x/proxy.size.width, 1),0)
-                                    self.isActive = true
-                                }).onEnded({
-                                    self.stop.location = max(min($0.location.x/proxy.size.width, 1),0)
-                                    self.isActive = false
-                                }))
+                        style.makeStop(configuration: configuration)
+                            .offset(x: (stop.location - 0.5)*(proxy.size.width-rect.width-4), y: 0)
+                            .onTapGesture { select() }
+                            .simultaneousGesture(
+                                DragGesture(minimumDistance: 10, coordinateSpace: .named(space))
+                                    .onChanged({
+                                        stop.location = max(min($0.location.x/proxy.size.width, 1),0)
+                                        isActive = true
+                                    }).onEnded({
+                                        stop.location = max(min($0.location.x/proxy.size.width, 1),0)
+                                        isActive = false
+                                    })
+                            )
                     })
-                
-                
             }
         }
     }
 }
-
-
-
-
-
 
 // MARK:  Picker
 
@@ -101,7 +95,7 @@ public struct RadialStop: View {
 ///
 ///
 ///  ## Styling The Picker
-/// In order to style the picker you must create a struct that conforms to the `RadialGradientPickerStyle` protocol. Conformance requires the implementation of 
+/// In order to style the picker you must create a struct that conforms to the `RadialGradientPickerStyle` protocol. Conformance requires the implementation of
 ///  5 separate methods. To make this easier just copy and paste the following style based on the `DefaultRadialGradientPickerStyle`. After creating your custom style
 ///  apply it by calling the `radialGradientPickerStyle` method on the `RadialGradientPicker` or a view containing it.
 ///
@@ -159,7 +153,6 @@ public struct RadialStop: View {
 ///            }
 ///        }
 /// ```
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct RadialGradientPicker: View {
     // MARK: State and Utilities
     @Environment(\.radialGradientPickerStyle) private var style: AnyRadialGradientPickerStyle
@@ -168,13 +161,16 @@ public struct RadialGradientPicker: View {
     @State private var startState: Double = 0 // Value on [0,1] representing the current dragging of the start handle
     @State private var endState: Double = 0 // Value on [0,1] representing the current dragging of the end handle
     private let space: String = "Radial Gradient"  // Indentifier used to denote the pickers coordinate space
+    
     public init() {}
+    
     // The current Unit location of the center thumb
     private func currentCenter(_ proxy: GeometryProxy) -> UnitPoint {
         let x = manager.gradient.center.x + centerState.width/proxy.size.width
         let y = manager.gradient.center.y + centerState.height/proxy.size.height
         return UnitPoint(x: x, y: y)
     }
+    
     // the current position of the center thumv
     private func currentCenter(_ proxy: GeometryProxy) -> CGPoint {
         let x = manager.gradient.center.x*proxy.size.width
@@ -185,52 +181,61 @@ public struct RadialGradientPicker: View {
     // MARK: Views
     // Creates the radial gradient
     private func makeGradient(_ proxy: GeometryProxy) ->  some View {
-        style.makeGradient(gradient: RadialGradient(gradient: self.manager.gradient.gradient,
-                                                    center: self.currentCenter(proxy),
-                                                    startRadius: self.manager.gradient.startRadius + CGFloat(self.startState),
-                                                    endRadius: self.manager.gradient.endRadius + CGFloat(self.endState)))
-            .drawingGroup(opaque: false, colorMode: self.manager.gradient.renderMode.renderingMode)
-            .animation(.linear)
+        style.makeGradient(
+            gradient: RadialGradient(gradient: manager.gradient.gradient,
+                                     center: currentCenter(proxy),
+                                     startRadius: manager.gradient.startRadius + CGFloat(startState),
+                                     endRadius: manager.gradient.endRadius + CGFloat(endState))
+        )
+        .drawingGroup(opaque: false, colorMode: manager.gradient.renderMode.renderingMode)
     }
+    
     // Creates the center thumb representing the center of the gradient
     private func makeCenter(_ proxy: GeometryProxy) -> some View {
-        self.style.makeCenter(configuration: .init(isActive: self.centerState != .zero, isHidden: self.manager.hideTools))
-            .position(self.currentCenter(proxy))
-            .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .named(self.space))
-                .onChanged({self.centerState = $0.translation})
-                .onEnded({
-                    let x = $0.location.x/proxy.size.width
-                    let y = $0.location.y/proxy.size.height
-                    self.manager.gradient.center = UnitPoint(x: x, y: y)
-                    self.centerState = .zero
-                }))
+        style.makeCenter(configuration: .init(isActive: centerState != .zero, isHidden: manager.hideTools))
+            .position(currentCenter(proxy))
+            .gesture(
+                DragGesture(minimumDistance: 0, coordinateSpace: .named(space))
+                    .onChanged({centerState = $0.translation})
+                    .onEnded({
+                        let x = $0.location.x/proxy.size.width
+                        let y = $0.location.y/proxy.size.height
+                        manager.gradient.center = UnitPoint(x: x, y: y)
+                        centerState = .zero
+                    })
+            )
     }
+    
     // Creates the draggable Circle representing the endRadius of the gradient
     private func makeEndHandle(_ proxy: GeometryProxy) -> some View {
-        self.style.makeEndHandle(configuration: .init(endState != 0, endState != 0, manager.hideTools, .zero))
+        style.makeEndHandle(configuration: .init(endState != 0, endState != 0, manager.hideTools, .zero))
             .frame(width: 2*(manager.gradient.endRadius + CGFloat(endState)))
-            .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .named(space))
-                .onChanged({
-                    self.endState = sqrt(($0.location - self.currentCenter(proxy)).magnitudeSquared) - Double(self.manager.gradient.endRadius)
-                }).onEnded({
-                    self.manager.gradient.endRadius = CGFloat(sqrt(($0.location - self.currentCenter(proxy)).magnitudeSquared))
-                    self.endState = 0
-                })).animation(.linear)
-            .position(self.currentCenter(proxy))
+            .gesture(
+                DragGesture(minimumDistance: 0, coordinateSpace: .named(space))
+                    .onChanged({
+                        endState = sqrt(($0.location - currentCenter(proxy)).magnitudeSquared) - Double(manager.gradient.endRadius)
+                    }).onEnded({
+                        manager.gradient.endRadius = CGFloat(sqrt(($0.location - currentCenter(proxy)).magnitudeSquared))
+                        endState = 0
+                    })
+            )
+            .position(currentCenter(proxy))
     }
+    
     // The Gradient filled bar that acts as a slider for the gradient stops
     private var gradientBar: some View {
         ZStack {
-            self.style.makeBar(configuration: .init(gradient: self.manager.gradient.gradient, isHidden: self.manager.hideTools))
-            ForEach(self.manager.gradient.stops.indices, id: \.self) { (i) in
-                RadialStop(stop: self.$manager.gradient.stops[i],
-                           selected: self.$manager.selected,
-                           isHidden: self.manager.hideTools,
-                           id: self.manager.gradient.stops[i].id)
+            style.makeBar(configuration: .init(gradient: manager.gradient.gradient, isHidden: manager.hideTools))
+            
+            ForEach(manager.gradient.stops.indices, id: \.self) { (i) in
+                RadialStop(stop: $manager.gradient.stops[i],
+                           selected: $manager.selected,
+                           isHidden: manager.hideTools,
+                           id: manager.gradient.stops[i].id)
             }
         }
         .frame(height: 50)
-        .coordinateSpace(name: self.space)
+        .coordinateSpace(name: space)
     }
     
     public var body: some View {
@@ -238,15 +243,15 @@ public struct RadialGradientPicker: View {
             ZStack {
                 GeometryReader { proxy in
                     ZStack {
-                        self.makeGradient(proxy)
-                        self.makeCenter(proxy)
-                        self.makeEndHandle(proxy)
+                        makeGradient(proxy)
+                        makeCenter(proxy)
+                        makeEndHandle(proxy)
                     }
                 }
             }
             .aspectRatio(1, contentMode: .fit)
-            .coordinateSpace(name: self.space)
-            self.gradientBar
+            .coordinateSpace(name: space)
+            gradientBar
         }
     }
 }

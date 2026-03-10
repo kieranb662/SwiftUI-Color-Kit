@@ -9,8 +9,6 @@
 import SwiftUI
 import Sliders
 
-
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct AlphaSliderStyle: LSliderStyle {
     public var color: ColorToken
     public var sliderHeight: CGFloat = 40
@@ -26,35 +24,37 @@ public struct AlphaSliderStyle: LSliderStyle {
         }
         .frame(width: sliderHeight, height: sliderHeight)
     }
+    
     public var blockHeight: CGFloat = 10
     
     public func makeTrack(configuration: LSliderConfiguration) -> some View {
         GeometryReader { proxy in
             ZStack {
                 VStack(spacing: 0) {
-                    ForEach(0..<max(Int(proxy.size.height/self.blockHeight), 2)) { (v: Int)  in
+                    ForEach(0..<max(Int(proxy.size.height/blockHeight), 2), id: \.self) { (v: Int)  in
                         HStack(spacing: 0) {
-                            ForEach(0..<max(Int((proxy.size.width+self.sliderHeight)/self.blockHeight), 2), id: \.self) { (h: Int) in
+                            ForEach(0..<max(Int((proxy.size.width+sliderHeight)/blockHeight), 2), id: \.self) { (h: Int) in
                                 Rectangle()
-                                    .fill( h % 2 == 0 ? v % 2 == 0 ? Color.black : Color.white : v % 2 == 0 ? Color.white : Color.black).frame(width: self.blockHeight, height: self.blockHeight).tag(h)
+                                    .fill(h % 2 == 0 ? v % 2 == 0 ? Color.black : Color.white : v % 2 == 0 ? Color.white : Color.black)
+                                    .frame(width: blockHeight, height: blockHeight).tag(h)
                             }
                         }
                     }
                 }
-                LinearGradient(gradient: self.gradient, startPoint: .leading, endPoint: .trailing)
+                LinearGradient(gradient: gradient, startPoint: .leading, endPoint: .trailing)
             }
             .drawingGroup()
             .mask(Capsule().fill())
-            .frame(width: proxy.size.width + self.sliderHeight, height: self.sliderHeight)
-                .overlay(
-                    Capsule()
-                        .stroke(Color.white, lineWidth: 1)
-                        .frame(width: proxy.size.width + self.sliderHeight)
-                )
+            .frame(width: proxy.size.width + sliderHeight, height: sliderHeight)
+            .overlay(
+                Capsule()
+                    .stroke(Color.white, lineWidth: 1)
+                    .frame(width: proxy.size.width + sliderHeight)
+            )
         }
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public struct AlphaSlider: View {
     @Binding public var color: ColorToken
     public var sliderHeight: CGFloat = 40
@@ -69,8 +69,7 @@ public struct AlphaSlider: View {
     }
     
     public var body: some View {
-        LSlider(Binding(get: { self.color.alpha }, set: { self.color = self.color.update(alpha: $0) }))
+        LSlider(Binding(get: { color.alpha }, set: { color = color.update(alpha: $0) }))
             .linearSliderStyle(AlphaSliderStyle(color: color, sliderHeight: sliderHeight))
-     
     }
 }

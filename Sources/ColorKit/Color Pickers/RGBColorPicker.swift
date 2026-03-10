@@ -7,31 +7,32 @@
 //
 
 import SwiftUI
-import Shapes
 import Sliders
 
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct RGBSliderStyle: LSliderStyle {
-    public enum ColorType: String, CaseIterable {
+    
+    public enum ColorType: String, CaseIterable, Sendable {
         case red
         case green
         case blue
     }
+    
     public var sliderHeight: CGFloat
     public var type: ColorType
     public var color: ColorToken
+    
     // Creates two colors based upon what the color would look like if the value of the slider was dragged all the way left or all the way right
     private var colors: [Color] {
         switch type {
         case .red:
-            return [Color(self.color.rgbColorSpace.space, red: 0, green: color.green, blue: color.blue),
-                    Color(self.color.rgbColorSpace.space, red: 1, green: color.green, blue: color.blue)]
+            return [Color(color.rgbColorSpace.space, red: 0, green: color.green, blue: color.blue),
+                    Color(color.rgbColorSpace.space, red: 1, green: color.green, blue: color.blue)]
         case .green:
-            return [Color(self.color.rgbColorSpace.space, red: color.red, green: 0, blue: color.blue),
-                    Color(self.color.rgbColorSpace.space, red: color.red, green: 1, blue: color.blue)]
+            return [Color(color.rgbColorSpace.space, red: color.red, green: 0, blue: color.blue),
+                    Color(color.rgbColorSpace.space, red: color.red, green: 1, blue: color.blue)]
         case .blue:
-            return [Color(self.color.rgbColorSpace.space, red: color.red, green: color.green, blue: 0),
-                    Color(self.color.rgbColorSpace.space, red: color.red, green: color.green, blue: 1)]
+            return [Color(color.rgbColorSpace.space, red: color.red, green: color.green, blue: 0),
+                    Color(color.rgbColorSpace.space, red: color.red, green: color.green, blue: 1)]
         }
     }
     
@@ -39,14 +40,13 @@ public struct RGBSliderStyle: LSliderStyle {
         let currentColor: Color =  {
             switch type {
             case .red:
-                return Color(self.color.rgbColorSpace.space, red: Double(configuration.pctFill), green: 0, blue: 0)
+                return Color(color.rgbColorSpace.space, red: Double(configuration.pctFill), green: 0, blue: 0)
             case .green:
-                return Color(self.color.rgbColorSpace.space, red: 0, green: Double(configuration.pctFill), blue: 0)
+                return Color(color.rgbColorSpace.space, red: 0, green: Double(configuration.pctFill), blue: 0)
             case .blue:
-                return Color(self.color.rgbColorSpace.space, red: 0, green: 0, blue: Double(configuration.pctFill))
+                return Color(color.rgbColorSpace.space, red: 0, green: 0, blue: Double(configuration.pctFill))
             }
         }()
-        
         
         return ZStack {
             Circle()
@@ -55,23 +55,30 @@ public struct RGBSliderStyle: LSliderStyle {
             Circle()
                 .fill(currentColor)
                 .scaleEffect(0.8)
-        }.frame(width: sliderHeight, height: sliderHeight)
+        }
+        .frame(width: sliderHeight, height: sliderHeight)
     }
-
+    
     public func makeTrack(configuration: LSliderConfiguration) -> some View {
-        let style: StrokeStyle = .init(lineWidth: sliderHeight, lineCap: .round)
-        let gradient = LinearGradient(gradient: Gradient(colors: colors), startPoint: .leading, endPoint: .trailing)
+        let gradient = LinearGradient(
+            gradient: Gradient(colors: colors),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+        
         return AdaptiveLine(angle: configuration.angle)
-            .stroke(gradient, style: style)
-            .overlay(GeometryReader { proxy in
-                Capsule()
-                    .stroke(Color.white)
-                    .frame(width: proxy.size.width + self.sliderHeight)
-                    .rotationEffect(configuration.angle)
-            })
+            .stroke(gradient, style: StrokeStyle(lineWidth: sliderHeight, lineCap: .round))
+            .overlay(
+                GeometryReader { proxy in
+                    Capsule()
+                        .stroke(Color.white)
+                        .frame(width: proxy.size.width + sliderHeight)
+                        .rotationEffect(configuration.angle)
+                }
+            )
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public struct RGBColorPicker: View {
     @Binding public var color: ColorToken
     public var sliderHeights: CGFloat = 40
@@ -103,7 +110,7 @@ public struct RGBColorPicker: View {
         return LSlider(value, range: 0...1, angle: .zero)
             .linearSliderStyle(RGBSliderStyle(sliderHeight: sliderHeights, type: color, color: self.color))
             .frame(height: sliderHeights)
-       }
+    }
     
     public var body: some View {
         VStack(spacing: 20){

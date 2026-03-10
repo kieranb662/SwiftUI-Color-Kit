@@ -8,23 +8,22 @@
 
 import SwiftUI
 
-
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-public struct ColorToken: Identifiable {
-    public enum ColorFormulation: String, CaseIterable, Identifiable {
+public struct ColorToken: Identifiable, Sendable {
+    public enum ColorFormulation: String, CaseIterable, Identifiable, Sendable {
         case rgb
         case hsb
         case cmyk
         case gray
         
-        public var id: String {self.rawValue}
+        public var id: String {rawValue}
     }
-    public enum RGBColorSpace: String, CaseIterable, Identifiable {
+    
+    public enum RGBColorSpace: String, CaseIterable, Identifiable, Sendable {
         case displayP3
         case sRGB
         case sRGBLinear
         
-        public var id: String {self.rawValue}
+        public var id: String {rawValue}
         
         public var space: Color.RGBColorSpace {
             switch self {
@@ -59,31 +58,31 @@ public struct ColorToken: Identifiable {
     
     public var alpha: Double = 1
     
-    public var hex: String { self.color.description }
+    public var hex: String { color.description }
     
     public var color: Color {
         switch colorFormulation {
         case .rgb:
-            return Color(self.rgbColorSpace.space, red: self.red, green: self.green, blue: self.blue, opacity: self.alpha)
+            return Color(rgbColorSpace.space, red: red, green: green, blue: blue, opacity: alpha)
         case .hsb:
-            return Color(hue: self.hue, saturation: self.saturation, brightness: self.brightness, opacity: self.alpha)
+            return Color(hue: hue, saturation: saturation, brightness: brightness, opacity: alpha)
         case .cmyk:
-            return Color(PlatformColor(cmyk: (CGFloat(self.cyan), CGFloat(self.magenta), CGFloat(self.yellow), CGFloat(self.keyBlack)))).opacity(alpha)
+            return Color(PlatformColor(cmyk: (CGFloat(cyan), CGFloat(magenta), CGFloat(yellow), CGFloat(keyBlack)))).opacity(alpha)
         case .gray:
-            return Color(white: self.white).opacity(alpha)
+            return Color(white: white).opacity(alpha)
         }
     }
     
     public var fileFormat: String {
         switch colorFormulation {
         case .rgb:
-            return "Color(.\(self.rgbColorSpace.space), red: \(self.red), green: \(self.green), blue: \(self.blue), opacity: \(self.alpha))"
+            return "Color(.\(rgbColorSpace.space), red: \(red), green: \(green), blue: \(blue), opacity: \(alpha))"
         case .hsb:
-            return "Color(hue: \(self.hue), saturation: \(self.saturation), brightness: \(self.brightness), opacity: \(self.alpha))"
+            return "Color(hue: \(hue), saturation: \(saturation), brightness: \(brightness), opacity: \(alpha))"
         case .cmyk:
-            return "Color(PlatformColor(cmyk: (\(self.cyan), \(self.magenta), \(self.yellow), \(self.keyBlack)))).opacity(\(alpha))"
+            return "Color(PlatformColor(cmyk: (\(cyan), \(magenta), \(yellow), \(keyBlack)))).opacity(\(alpha))"
         case .gray:
-            return "Color(white: \(self.white).opacity(\(alpha))"
+            return "Color(white: \(white).opacity(\(alpha))"
         }
     }
     
@@ -125,85 +124,95 @@ public struct ColorToken: Identifiable {
     }
     
     public func update() -> ColorToken {
-        .init(id: self.id,
-              date: self.dateCreated,
-              name: self.name,
-              formulation: self.colorFormulation,
-              rgbColorSpace: self.rgbColorSpace,
-              white: self.white,
-              red: self.red,
-              green: self.green,
-              blue: self.blue,
-              hue: self.hue,
-              saturation: self.saturation,
-              brightness: self.brightness,
-              cyan: self.cyan,
-              magenta: self.magenta,
-              yellow: self.yellow,
-              keyBlack: self.keyBlack,
-              alpha: self.alpha)
+        ColorToken(id: id,
+              date: dateCreated,
+              name: name,
+              formulation: colorFormulation,
+              rgbColorSpace: rgbColorSpace,
+              white: white,
+              red: red,
+              green: green,
+              blue: blue,
+              hue: hue,
+              saturation: saturation,
+              brightness: brightness,
+              cyan: cyan,
+              magenta: magenta,
+              yellow: yellow,
+              keyBlack: keyBlack,
+              alpha: alpha)
     }
     
     public mutating func update(white: Double)  -> ColorToken {
         self.white = white
-        self.colorFormulation = .gray
-        return self.update()
-    }
-    public mutating func update(red: Double) -> ColorToken {
-        self.red = red
-        self.colorFormulation = .rgb
-        return self.update()
-    }
-    public mutating func update(green: Double) -> ColorToken {
-        self.green = green
-        self.colorFormulation = .rgb
-        return self.update()
-    }
-    public mutating func update(blue: Double) -> ColorToken {
-        self.blue = blue
-        self.colorFormulation = .rgb
-        return self.update()
-    }
-    public mutating func update(hue: Double) -> ColorToken {
-        self.hue = hue
-        self.colorFormulation = .hsb
-        return self.update()
-    }
-    public mutating func update(saturation: Double) -> ColorToken {
-        self.saturation = saturation
-        self.colorFormulation = .hsb
-        return self.update()
-    }
-    public mutating func update(brightness: Double) -> ColorToken {
-        self.brightness = brightness
-        self.colorFormulation = .hsb
-        return self.update()
-    }
-    public mutating func update(cyan: Double) -> ColorToken {
-        self.cyan = cyan
-        self.colorFormulation = .cmyk
-        return self.update()
-    }
-    public mutating func update(magenta: Double) -> ColorToken {
-        self.magenta = magenta
-        self.colorFormulation = .cmyk
-        return self.update()
-    }
-    public mutating func update(yellow: Double) -> ColorToken {
-        self.yellow = yellow
-        self.colorFormulation = .cmyk
-        return self.update()
-    }
-    public mutating func update(keyBlack: Double) -> ColorToken {
-        self.keyBlack = keyBlack
-        self.colorFormulation = .cmyk
-        return self.update()
-    }
-    public mutating func update(alpha: Double) -> ColorToken {
-        self.alpha = alpha
-        return self.update()
+        colorFormulation = .gray
+        return update()
     }
     
+    public mutating func update(red: Double) -> ColorToken {
+        self.red = red
+        colorFormulation = .rgb
+        return update()
+    }
+    
+    public mutating func update(green: Double) -> ColorToken {
+        self.green = green
+        colorFormulation = .rgb
+        return update()
+    }
+    
+    public mutating func update(blue: Double) -> ColorToken {
+        self.blue = blue
+        colorFormulation = .rgb
+        return update()
+    }
+    
+    public mutating func update(hue: Double) -> ColorToken {
+        self.hue = hue
+        colorFormulation = .hsb
+        return update()
+    }
+    
+    public mutating func update(saturation: Double) -> ColorToken {
+        self.saturation = saturation
+        colorFormulation = .hsb
+        return update()
+    }
+    
+    public mutating func update(brightness: Double) -> ColorToken {
+        self.brightness = brightness
+        colorFormulation = .hsb
+        return update()
+    }
+    
+    public mutating func update(cyan: Double) -> ColorToken {
+        self.cyan = cyan
+        colorFormulation = .cmyk
+        return update()
+    }
+    
+    public mutating func update(magenta: Double) -> ColorToken {
+        self.magenta = magenta
+        colorFormulation = .cmyk
+        return update()
+    }
+    
+    public mutating func update(yellow: Double) -> ColorToken {
+        self.yellow = yellow
+        colorFormulation = .cmyk
+        return update()
+    }
+    
+    public mutating func update(keyBlack: Double) -> ColorToken {
+        self.keyBlack = keyBlack
+        colorFormulation = .cmyk
+        return update()
+    }
+    
+    public mutating func update(alpha: Double) -> ColorToken {
+        self.alpha = alpha
+        return update()
+    }
     
     // MARK: RGB Inits
     public init(r: Double, g: Double, b: Double) {
@@ -233,6 +242,7 @@ public struct ColorToken: Identifiable {
         self.rgbColorSpace = colorSpace
         
     }
+    
     public init(name: String, colorSpace: RGBColorSpace, r: Double, g: Double, b: Double) {
         self.name = name
         self.id = .init()
@@ -244,6 +254,7 @@ public struct ColorToken: Identifiable {
         self.rgbColorSpace = colorSpace
         
     }
+    
     public init(r: Double, g: Double, b: Double, a: Double) {
         self.id = .init()
         self.dateCreated = .init()
@@ -253,6 +264,7 @@ public struct ColorToken: Identifiable {
         self.alpha = a
         self.colorFormulation = .rgb
     }
+    
     public init(name: String, r: Double, g: Double, b: Double, a: Double) {
         self.name = name
         self.id = .init()
@@ -263,6 +275,7 @@ public struct ColorToken: Identifiable {
         self.alpha = a
         self.colorFormulation = .rgb
     }
+    
     public init(colorSpace: RGBColorSpace, r: Double, g: Double, b: Double, a: Double) {
         self.id = .init()
         self.dateCreated = .init()
@@ -272,8 +285,8 @@ public struct ColorToken: Identifiable {
         self.alpha = a
         self.colorFormulation = .rgb
         self.rgbColorSpace = colorSpace
-        
     }
+    
     public init(name: String, colorSpace: RGBColorSpace, r: Double, g: Double, b: Double, a: Double) {
         self.name = name
         self.id = .init()
@@ -284,8 +297,8 @@ public struct ColorToken: Identifiable {
         self.alpha = a
         self.colorFormulation = .rgb
         self.rgbColorSpace = colorSpace
-        
     }
+    
     // MARK: HSB Inits
     public init(hue: Double, saturation: Double, brightness: Double) {
         self.id = .init()
@@ -295,6 +308,7 @@ public struct ColorToken: Identifiable {
         self.brightness = brightness
         self.colorFormulation = .hsb
     }
+    
     public init(name: String, hue: Double, saturation: Double, brightness: Double) {
         self.id = .init()
         self.dateCreated = .init()
@@ -304,6 +318,7 @@ public struct ColorToken: Identifiable {
         self.brightness = brightness
         self.colorFormulation = .hsb
     }
+    
     public init(hue: Double, saturation: Double, brightness: Double, opacity: Double) {
         self.id = .init()
         self.dateCreated = .init()
@@ -313,6 +328,7 @@ public struct ColorToken: Identifiable {
         self.alpha = opacity
         self.colorFormulation = .hsb
     }
+    
     public init(name: String, hue: Double, saturation: Double, brightness: Double, opacity: Double) {
         self.id = .init()
         self.dateCreated = .init()
@@ -323,6 +339,7 @@ public struct ColorToken: Identifiable {
         self.alpha = opacity
         self.colorFormulation = .hsb
     }
+    
     // MARK: CMYK Inits
     public init(cyan: Double, magenta: Double, yellow: Double, keyBlack: Double) {
         self.id = .init()
@@ -333,6 +350,7 @@ public struct ColorToken: Identifiable {
         self.keyBlack = keyBlack
         self.colorFormulation = .cmyk
     }
+    
     public init(name: String, cyan: Double, magenta: Double, yellow: Double, keyBlack: Double) {
         self.id = .init()
         self.dateCreated = .init()
@@ -343,6 +361,7 @@ public struct ColorToken: Identifiable {
         self.keyBlack = keyBlack
         self.colorFormulation = .cmyk
     }
+    
     // MARK: White Inits
     public init(white: Double) {
         self.id = .init()
@@ -350,6 +369,7 @@ public struct ColorToken: Identifiable {
         self.white = white
         self.colorFormulation = .gray
     }
+    
     public init(name: String, white: Double) {
         self.id = .init()
         self.dateCreated = .init()
@@ -357,6 +377,7 @@ public struct ColorToken: Identifiable {
         self.white = white
         self.colorFormulation = .gray
     }
+    
     public init(white: Double, opacity: Double) {
         self.id = .init()
         self.dateCreated = .init()
@@ -364,6 +385,7 @@ public struct ColorToken: Identifiable {
         self.alpha = opacity
         self.colorFormulation = .gray
     }
+    
     public init(name: String, white: Double, opacity: Double) {
         self.id = .init()
         self.dateCreated = .init()
@@ -372,6 +394,7 @@ public struct ColorToken: Identifiable {
         self.alpha = opacity
         self.colorFormulation = .gray
     }
+    
     public init(_ token: ColorToken) {
         self.id = .init()
         self.dateCreated = .init()
@@ -390,12 +413,9 @@ public struct ColorToken: Identifiable {
         self.magenta = token.magenta
         self.yellow = token.yellow
         self.keyBlack = token.keyBlack
-        
     }
-    
 }
 
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public extension ColorToken {
     
     // MARK: - Color Scheme
@@ -405,7 +425,6 @@ public extension ColorToken {
         case triad
         case complementary = "complement"
     }
-    
     
     func colorScheme(_ type: ColorScheme) -> [ColorToken] {
         switch (type) {
@@ -421,32 +440,39 @@ public extension ColorToken {
     }
     
     func analgousColors() -> [ColorToken] {
-        return [ColorToken(hue: (hue*360+30)/360, saturation: saturation-0.05, brightness: brightness-0.1, opacity: alpha),
+        return [
+            ColorToken(hue: (hue*360+30)/360, saturation: saturation-0.05, brightness: brightness-0.1, opacity: alpha),
                 ColorToken(hue: (hue*360+15)/360, saturation: saturation-0.05, brightness: brightness-0.05, opacity: alpha),
                 ColorToken(hue: (hue*360-15)/360, saturation: saturation-0.05, brightness: brightness-0.05, opacity: alpha),
-                ColorToken(hue: (hue*360-30)/360, saturation: saturation-0.05, brightness: brightness-0.1, opacity: alpha)]
+                ColorToken(hue: (hue*360-30)/360, saturation: saturation-0.05, brightness: brightness-0.1, opacity: alpha)
+        ]
     }
     
     func monochromaticColors() -> [ColorToken] {
-        return [ColorToken(hue: hue, saturation: saturation/2, brightness: brightness/3, opacity: alpha),
+        return [
+            ColorToken(hue: hue, saturation: saturation/2, brightness: brightness/3, opacity: alpha),
                 ColorToken(hue: hue, saturation: saturation, brightness: brightness/2, opacity: alpha),
                 ColorToken(hue: hue, saturation: saturation/3, brightness: 2*brightness/3, opacity: alpha),
-                ColorToken(hue: hue, saturation: saturation, brightness: 4*brightness/5, opacity: alpha)]
+                ColorToken(hue: hue, saturation: saturation, brightness: 4*brightness/5, opacity: alpha)
+        ]
         
     }
     
     func triadColors() -> [ColorToken] {
-        return [ColorToken(hue: (120+hue*360)/360, saturation: 2*saturation/3, brightness: brightness-0.05, opacity: alpha),
+        return [
+            ColorToken(hue: (120+hue*360)/360, saturation: 2*saturation/3, brightness: brightness-0.05, opacity: alpha),
                 ColorToken(hue: (120+hue*360)/360, saturation: saturation, brightness: brightness, opacity: alpha),
                 ColorToken(hue: (240+hue*360)/360, saturation: saturation, brightness: brightness, opacity: alpha),
-                ColorToken(hue: (240+hue*360)/360, saturation: 2*saturation/3, brightness: brightness-0.05, opacity: alpha)]
-        
+                ColorToken(hue: (240+hue*360)/360, saturation: 2*saturation/3, brightness: brightness-0.05, opacity: alpha)
+        ]
     }
     
     func complementaryColors() -> [ColorToken] {
-        return  [ColorToken(hue: hue, saturation: saturation, brightness: 4*brightness/5, opacity: alpha),
+        return [
+            ColorToken(hue: hue, saturation: saturation, brightness: 4*brightness/5, opacity: alpha),
                  ColorToken(hue: hue, saturation: 5*saturation/7, brightness: brightness, opacity: alpha),
                  ColorToken(hue: (180+hue*360)/360, saturation: saturation, brightness: brightness, opacity: alpha),
-                 ColorToken(hue: (180+hue*360)/360, saturation: 5*saturation/7, brightness: brightness, opacity: alpha)]
+                 ColorToken(hue: (180+hue*360)/360, saturation: 5*saturation/7, brightness: brightness, opacity: alpha)
+        ]
     }
 }
