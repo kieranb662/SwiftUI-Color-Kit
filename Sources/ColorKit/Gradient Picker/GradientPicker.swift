@@ -1,18 +1,13 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/6/20.
 //
-//  GradientPicker.swift
-//  MyExamples
+// Author: Kieran Brown
 //
-//  Created by Kieran Brown on 4/6/20.
-//  Copyright © 2020 BrownandSons. All rights reserved.
-//
-
 import SwiftUI
 
-
-
-
 // MARK: Gradient Manager
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public class GradientManager: ObservableObject {
     @Published public var gradient: GradientData
     @Published public var hideTools: Bool = false
@@ -25,8 +20,7 @@ public class GradientManager: ObservableObject {
 }
 
 /// Example of using all three of the gradient pickers to make a single unified picker
-/// Does not have a color picker associated with so one must implement this as part of a larger view with a colorpicker 
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+/// Does not have a color picker associated with so one must implement this as part of a larger view with a colorpicker
 public struct GradientPicker: View {
     @ObservedObject public var manager: GradientManager
     public init(_ manager: ObservedObject<GradientManager>) {
@@ -34,49 +28,66 @@ public struct GradientPicker: View {
     }
     
     private var toolToggle: some View {
-        Toggle(isOn: $manager.hideTools,
-               label: {Text(!self.manager.hideTools ? "Hide Tools" : "Show Tools")})
+        Toggle(isOn: $manager.hideTools) {
+            Text(manager.hideTools ? "Show Tools" : "Hide Tools")
+        }
     }
+    
     private var typePicker: some View {
         HStack {
-            Text("Gradient").frame(width: 80)
+            Text("Gradient")
+                .frame(width: 80)
+            
             Picker("Gradient", selection: $manager.gradient.type) {
                 ForEach(GradientData.GradientType.allCases, id: \.self) { (type) in
                     Text(type.rawValue).tag(type)
                 }
-            }.pickerStyle(SegmentedPickerStyle())
+            }
+            .pickerStyle(SegmentedPickerStyle())
         }
     }
+    
     private var renderModePicker: some View {
         HStack {
-            Text("Render Mode").frame(width: 80)
+            Text("Render Mode")
+                .frame(width: 80)
+            
             Picker("Render Mode", selection: $manager.gradient.renderMode) {
                 ForEach(GradientData.ColorRenderMode.allCases, id: \.self) { (type) in
                     Text(type.rawValue).tag(type)
                 }
-            }.pickerStyle(SegmentedPickerStyle())
+            }
+            .pickerStyle(SegmentedPickerStyle())
         }
     }
+    
+    @ViewBuilder
     private var currentPicker: some View {
-        Group {
-            if manager.gradient.type == .linear {
-                LinearGradientPicker()
-            } else if manager.gradient.type == .radial {
-                RadialGradientPicker()
-            } else {
-                AngularGradientPicker()
-            }
-        }.environmentObject(manager)
+        switch manager.gradient.type {
+        case .linear:
+            LinearGradientPicker()
+        case .radial:
+            RadialGradientPicker()
+        case .angular:
+            AngularGradientPicker()
+        }
     }
     
     public var body: some View {
         VStack {
-            typePicker.padding(.horizontal, 40)
-            renderModePicker.padding(.horizontal, 40)
-            toolToggle.padding(.horizontal, 40)
+            typePicker
+                .padding(.horizontal, 40)
+            
+            renderModePicker
+                .padding(.horizontal, 40)
+            
+            toolToggle
+                .padding(.horizontal, 40)
+            
             currentPicker
                 .frame(idealHeight: 400, maxHeight: 500)
                 .padding(35)
+                .environmentObject(manager)
         }
     }
 }

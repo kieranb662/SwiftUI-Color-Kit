@@ -1,15 +1,11 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/3/20.
 //
-//  LinearGradientPicker.swift
-//  MyExamples
-//
-//  Created by Kieran Brown on 4/3/20.
-//  Copyright © 2020 BrownandSons. All rights reserved.
+// Author: Kieran Brown
 //
 
 import SwiftUI
-import CGExtender
-
-
 
 // MARK: Stop
 
@@ -21,7 +17,6 @@ import CGExtender
 /// By calculating the projection of the drag gestures location onto the line segment defined between the start and end values
 /// The projected point which lies on the infinited line defined by the angle between the start and end values is then constrained to the line segment using
 /// the parametric form of the line.
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct LinearStop: View {
     @Environment(\.linearGradientPickerStyle) private var style: AnyLinearGradientPickerStyle
     @Binding var stop: GradientData.Stop
@@ -32,51 +27,57 @@ public struct LinearStop: View {
     public let id: UUID // Used to identify the stop
     public let start: CGPoint // Current location of the start handle
     public let end: CGPoint // Current location of the end handle
+    
     // calculates the angle of the line segment defined by the start and end locations and the adds 90 degrees
     // so the the handles and stops are parrallel with the gradient
     private var angle: Angle {
         let diff = end - start
         return Angle(radians: diff.x == 0 ? Double.pi/2 : atan(Double(diff.y/diff.x)) +  .pi/2)
     }
+    
     // Uses the parametric form of the line defined between the start and end handles to calculate the location of the stop
     private var lerp: CGPoint {
-        
         let x = (1-stop.location)*start.x + stop.location*end.x
         let y = (1-stop.location)*start.y + stop.location*end.y
         return CGPoint(x: x, y: y)
     }
+    
     private var configuration: GradientStopConfiguration {
-        return .init(isActive,
-                     selected == id,
-                     isHidden,
-                     stop.color.color,
-                     angle)
+        GradientStopConfiguration(
+            isActive,
+            selected == id,
+            isHidden,
+            stop.color.color,
+            angle
+        )
     }
+    
     func select() {
         if selected == id {
-            self.selected = nil
+            selected = nil
         } else {
-            self.selected = id
+            selected = id
         }
     }
     
     public var body: some View {
         GeometryReader { proxy in
             ZStack {
-                self.style.makeStop(configuration: self.configuration)
-                    .offset(x: self.lerp.x - proxy.size.width/2, y: self.lerp.y - proxy.size.height/2)
-                    .onTapGesture { self.select() }
-                    .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .named(self.space))
-                        .onChanged({
-                            self.stop.location = calculateParameter(self.start, self.end, $0.location)
-                            self.isActive = true
-                        })
-                        .onEnded({
-                            self.stop.location = calculateParameter(self.start, self.end, $0.location)
-                            self.isActive = false
-                        }))
+                style.makeStop(configuration: configuration)
+                    .offset(x: lerp.x - proxy.size.width/2, y: lerp.y - proxy.size.height/2)
+                    .onTapGesture { select() }
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 10, coordinateSpace: .named(space))
+                            .onChanged {
+                                stop.location = calculateParameter(start, end, $0.location)
+                                isActive = true
+                            }
+                            .onEnded {
+                                stop.location = calculateParameter(start, end, $0.location)
+                                isActive = false
+                            }
+                    )
             }
-            
         }
     }
 }
@@ -140,14 +141,15 @@ public struct LinearStop: View {
 ///      }
 ///
 ///  ```
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct LinearGradientPicker: View {
     @Environment(\.linearGradientPickerStyle) private var style: AnyLinearGradientPickerStyle
     @EnvironmentObject private var manager: GradientManager
     private let space: String = "Linear Gradient"
     @GestureState private var startState: DragState = .inactive // Gesture state for the start point thumb
     @GestureState private var endState: DragState = .inactive // Gesture state for the end point thumb
+    
     public init() {}
+    
     enum DragState {
         case inactive
         case pressing
@@ -186,27 +188,31 @@ public struct LinearGradientPicker: View {
     /// The starts current location in unit point form
     private func currentUnitStart(_ proxy: GeometryProxy) -> UnitPoint {
         if proxy.size.width == 0 || proxy.size.height == 0 { return UnitPoint.zero }
-        return UnitPoint(x: self.manager.gradient.start.x + self.startState.translation.width/proxy.size.width,
-                         y: self.manager.gradient.start.y + self.startState.translation.height/proxy.size.height)
+        return UnitPoint(x: manager.gradient.start.x + startState.translation.width/proxy.size.width,
+                         y: manager.gradient.start.y + startState.translation.height/proxy.size.height)
     }
+    
     /// The ends current location in unit point form
     private func currentUnitEnd(_ proxy: GeometryProxy) -> UnitPoint {
-        if proxy.size.width == 0 || proxy.size.height == 0 { return UnitPoint.zero}
-        return UnitPoint(x: self.manager.gradient.end.x + self.endState.translation.width/proxy.size.width,
-                         y: self.manager.gradient.end.y + self.endState.translation.height/proxy.size.height)
+        if proxy.size.width == 0 || proxy.size.height == 0 { return UnitPoint.zero }
+        return UnitPoint(x: manager.gradient.end.x + endState.translation.width/proxy.size.width,
+                         y: manager.gradient.end.y + endState.translation.height/proxy.size.height)
     }
+    
     /// The starts current location
     private func currentStartPoint(_ proxy: GeometryProxy) -> CGPoint {
         if proxy.size.width == 0 || proxy.size.height == 0 { return .zero }
-        return CGPoint(x: self.manager.gradient.start.x*proxy.size.width + self.startState.translation.width,
-                       y: self.manager.gradient.start.y*proxy.size.height + self.startState.translation.height)
+        return CGPoint(x: manager.gradient.start.x*proxy.size.width + startState.translation.width,
+                       y: manager.gradient.start.y*proxy.size.height + startState.translation.height)
     }
+    
     /// The ends current location
     private func currentEndPoint(_ proxy: GeometryProxy) -> CGPoint {
         if proxy.size.width == 0 || proxy.size.height == 0 { return .zero }
-        return CGPoint(x: self.manager.gradient.end.x*proxy.size.width + self.endState.translation.width,
-                       y: self.manager.gradient.end.y*proxy.size.height + self.endState.translation.height)
+        return CGPoint(x: manager.gradient.end.x*proxy.size.width + endState.translation.width,
+                       y: manager.gradient.end.y*proxy.size.height + endState.translation.height)
     }
+    
     /// Here the angle is calculated using the actual sizes of the Rectangle rather than the UnitPoint values
     /// This is because UnitPoints represent perfect squares with a side length of 1, therefore any angle calculated
     /// would be for a square region rather than a rectangular
@@ -218,13 +224,12 @@ public struct LinearGradientPicker: View {
     // MARK: Views
     /// Makes The Linear Gradient
     private func makeGradient(_ proxy: GeometryProxy) -> some View {
-        style.makeGradient(gradient: LinearGradient(gradient: self.manager.gradient.gradient,
-                                                    startPoint: self.currentUnitStart(proxy),
-                                                    endPoint: self.currentUnitEnd(proxy)))
-            
-            .drawingGroup(opaque: false, colorMode: self.manager.gradient.renderMode.renderingMode)
-            .animation(.interactiveSpring())
+        style.makeGradient(gradient: LinearGradient(gradient: manager.gradient.gradient,
+                                                    startPoint: currentUnitStart(proxy),
+                                                    endPoint: currentUnitEnd(proxy)))
+        .drawingGroup(opaque: false, colorMode: manager.gradient.renderMode.renderingMode)
     }
+    
     /// Creates a the views to be used as either the startHandle or endHandle
     private func makeHandle(_ proxy: GeometryProxy, _ point: Binding<UnitPoint>, _ state: GestureState<DragState>) -> some View {
         let offsetX = point.x.wrappedValue*proxy.size.width + state.wrappedValue.translation.width - proxy.size.width/2
@@ -241,42 +246,48 @@ public struct LinearGradientPicker: View {
                 default:                      // Dragging ended or the long press cancelled.
                     state = .inactive
                 }
-        }
-        .onEnded { value in
-            guard case .second(true, let drag?) = value else { return }
-            point.wrappedValue = UnitPoint(x: drag.translation.width/proxy.size.width + point.wrappedValue.x,
-                                           y: drag.translation.height/proxy.size.height + point.wrappedValue.y)
-        }
-        let configuration: GradientHandleConfiguration = .init(state.wrappedValue.isActive,
-                                                               state.wrappedValue.isDragging,
-                                                               manager.hideTools,
-                                                               angle(proxy))
+            }
+            .onEnded { value in
+                guard case .second(true, let drag?) = value else { return }
+                point.wrappedValue = UnitPoint(
+                    x: drag.translation.width/proxy.size.width + point.wrappedValue.x,
+                    y: drag.translation.height/proxy.size.height + point.wrappedValue.y
+                )
+            }
         
-        return style.makeStartHandle(configuration: configuration)
-            .offset(x: offsetX, y: offsetY)
-            .gesture(longPressDrag)
-        
+        return style.makeStartHandle(
+            configuration: GradientHandleConfiguration(
+                state.wrappedValue.isActive,
+                state.wrappedValue.isDragging,
+                manager.hideTools,
+                angle(proxy))
+        )
+        .offset(x: offsetX, y: offsetY)
+        .gesture(longPressDrag)
     }
+    
     private func makeStops(_ proxy: GeometryProxy) -> some View {
-        ForEach(self.manager.gradient.stops.indices, id: \.self) { (i) in
-            LinearStop(stop: self.$manager.gradient.stops[i],
-                       selected: self.$manager.selected,
-                       isHidden: self.manager.hideTools,
-                       id: self.manager.gradient.stops[i].id,
-                       start: self.currentStartPoint(proxy),
-                       end: self.currentEndPoint(proxy))
+        ForEach(manager.gradient.stops.indices, id: \.self) { (i) in
+            LinearStop(
+                stop: $manager.gradient.stops[i],
+                selected: $manager.selected,
+                isHidden: manager.hideTools,
+                id: manager.gradient.stops[i].id,
+                start: currentStartPoint(proxy),
+                end: currentEndPoint(proxy)
+            )
         }
     }
     
     public var body: some View {
         GeometryReader { proxy in
             ZStack {
-                self.makeGradient(proxy)
-                self.makeHandle(proxy, self.$manager.gradient.start, self.$startState) // Start Handle
-                self.makeHandle(proxy, self.$manager.gradient.end, self.$endState) // End Handle
-                self.makeStops(proxy)
-                
-            }.coordinateSpace(name: self.space)
+                makeGradient(proxy)
+                makeHandle(proxy, $manager.gradient.start, $startState) // Start Handle
+                makeHandle(proxy, $manager.gradient.end, $endState) // End Handle
+                makeStops(proxy)
+            }
+            .coordinateSpace(name: space)
         }
     }
 }

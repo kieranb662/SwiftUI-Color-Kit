@@ -1,35 +1,32 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/13/20.
 //
-//  GradientData.swift
-//  
+// Author: Kieran Brown
 //
-//  Created by Kieran Brown on 4/13/20.
-//
-
 
 import SwiftUI
 
-
 /// A Token representing the composite data from `LinearGradient`, `RadialGradient`, and `AngularGradient` parameters
-/// When finished designing the gradient just access the `swiftUIFile` value and copy/paste it into your project. 
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-public struct GradientData: Identifiable {
+/// When finished designing the gradient just access the `swiftUIFile` value and copy/paste it into your project.
+public struct GradientData: Identifiable, Sendable {
     
     /// Token representing the different types of SwiftUI Gradients
-    public enum GradientType: String , CaseIterable, Identifiable {
+    public enum GradientType: String , CaseIterable, Identifiable, Sendable {
         case linear
         case radial
         case angular
         
-        public var id: String {self.rawValue}
+        public var id: String {rawValue}
     }
     
     /// Wrapper enum for `ColorRenderingMode`
-    public enum ColorRenderMode: String, CaseIterable, Identifiable {
+    public enum ColorRenderMode: String, CaseIterable, Identifiable, Sendable {
         case linear
         case extendedLinear = "extended"
         case nonLinear
         
-        public var id: String { self.rawValue }
+        public var id: String { rawValue }
         
         public var renderingMode: ColorRenderingMode {
             switch self {
@@ -39,7 +36,8 @@ public struct GradientData: Identifiable {
             }
         }
     }
-    public struct Stop: Identifiable {
+    
+    public struct Stop: Identifiable, Sendable {
         public var color: ColorToken
         public var location: CGFloat
         
@@ -87,7 +85,7 @@ public struct GradientData: Identifiable {
     public var endAngle: Double = 0.5
  
     public var _stops: [Gradient.Stop] {
-        self.stops
+        stops
             .map({$0.gradientStop})
             .sorted(by: {$0.location < $1.location})
     }
@@ -128,7 +126,6 @@ public struct GradientData: Identifiable {
         self.stops = stops
     }
     
-    
     public init(name: String, stops: [Stop], startPoint: UnitPoint, endPoint: UnitPoint) {
         self.name = name
         self.stops = stops
@@ -136,6 +133,7 @@ public struct GradientData: Identifiable {
         self.end = endPoint
         self.type = .linear
     }
+    
     public init(name: String, stops: [Stop], center: UnitPoint, startRadius: CGFloat, endRadius: CGFloat) {
         self.name = name
         self.stops = stops
@@ -144,6 +142,7 @@ public struct GradientData: Identifiable {
         self.endRadius = endRadius
         self.type = .radial
     }
+    
     public init(name: String, stops: [Stop], center: UnitPoint, startAngle: Double, endAngle: Double) {
         self.name = name
         self.stops = stops

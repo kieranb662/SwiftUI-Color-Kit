@@ -1,17 +1,15 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/6/20.
 //
-//  GradientStyles.swift
-//  MyExamples
-//
-//  Created by Kieran Brown on 4/6/20.
-//  Copyright © 2020 BrownandSons. All rights reserved.
+// Author: Kieran Brown
 //
 
 import SwiftUI
+
 // MARK: - Configuration Structures
 
-
 /// Used to style the dragging view that represents a gradients start or end value
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct GradientHandleConfiguration {
     public let isActive: Bool
     public let isDragging: Bool
@@ -24,8 +22,8 @@ public struct GradientHandleConfiguration {
         self.angle = angle
     }
 }
+
 /// Used to style a view representing a single stop in a gradient
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct GradientStopConfiguration {
     public let isActive: Bool
     public let isSelected: Bool
@@ -41,21 +39,21 @@ public struct GradientStopConfiguration {
         self.angle = angle
     }
 }
+
 /// Used to style the draggable view representing the center of either an Angular or Radial Gradient
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct GradientCenterConfiguration {
     public let isActive: Bool
     public let isHidden: Bool
 }
+
 /// Used to style the slider bar the stops overlay in the `RadialGradientPicker`
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
 public struct RadialGradientBarConfiguration {
     public let gradient: Gradient
     public let isHidden: Bool
 }
 
 // MARK: -  Default Styles
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public struct DefaultLinearGradientPickerStyle: LinearGradientPickerStyle {
     public init() {}
     public func makeGradient(gradient: LinearGradient) -> some View {
@@ -68,7 +66,6 @@ public struct DefaultLinearGradientPickerStyle: LinearGradientPickerStyle {
             .foregroundColor(Color.white)
             .frame(width: 25, height: 75)
             .rotationEffect(configuration.angle + Angle(degrees: 90))
-            .animation(.none)
             .shadow(radius: 3)
             .opacity(configuration.isHidden ? 0 : 1)
     }
@@ -77,7 +74,6 @@ public struct DefaultLinearGradientPickerStyle: LinearGradientPickerStyle {
             .foregroundColor(Color.white)
             .frame(width: 25, height: 75)
             .rotationEffect(configuration.angle + Angle(degrees: 90))
-            .animation(.none)
             .shadow(radius: 3)
             .opacity(configuration.isHidden ? 0 : 1)
     }
@@ -87,13 +83,12 @@ public struct DefaultLinearGradientPickerStyle: LinearGradientPickerStyle {
             .frame(width: 20, height: 55)
             .overlay(Capsule().stroke( configuration.isSelected ? Color.yellow : Color.white ))
             .rotationEffect(configuration.angle + Angle(degrees: 90))
-            .animation(.none)
             .shadow(color: configuration.isSelected ? Color.white : Color.black, radius: 3)
             .opacity(configuration.isHidden ? 0 : 1)
         
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public struct DefaultRadialGradientPickerStyle: RadialGradientPickerStyle {
     public init() {}
     public func makeGradient(gradient: RadialGradient) -> some View {
@@ -106,21 +101,18 @@ public struct DefaultRadialGradientPickerStyle: RadialGradientPickerStyle {
             .fill(configuration.isActive ? Color.yellow : Color.white)
             .frame(width: 35, height: 35)
             .opacity(configuration.isHidden ? 0 : 1)
-            .animation(.easeIn)
     }
     public func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
         Circle()
             .stroke(Color.white.opacity(0.001), style: StrokeStyle(lineWidth: 10))
             .overlay(Circle().stroke(Color.black, style: StrokeStyle(lineWidth: 1, dash: [10, 5])))
             .opacity(configuration.isHidden ? 0 : 1)
-            .animation(.easeIn)
     }
     public func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
         Circle()
             .stroke(Color.white.opacity(0.001), style: StrokeStyle(lineWidth: 10))
             .overlay(Circle().stroke(Color.white, style: StrokeStyle(lineWidth: 1, dash: [10, 5])))
             .opacity(configuration.isHidden ? 0 : 1)
-            .animation(.easeIn)
     }
     public func makeStop(configuration: GradientStopConfiguration) -> some View {
         Group {
@@ -131,7 +123,7 @@ public struct DefaultRadialGradientPickerStyle: RadialGradientPickerStyle {
                     .overlay(RoundedRectangle(cornerRadius: 5).stroke( configuration.isSelected ? Color.yellow : Color.white ))
                     .shadow(color: configuration.isSelected ? Color.white : Color.black, radius: 3)
                     .transition(AnyTransition.opacity)
-                    .animation(Animation.easeOut)
+ 
             }
         }
     }
@@ -142,13 +134,12 @@ public struct DefaultRadialGradientPickerStyle: RadialGradientPickerStyle {
                     .fill(LinearGradient(gradient: configuration.gradient, startPoint: .leading, endPoint: .trailing))
                     .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.white))
                     .transition(AnyTransition.move(edge: .leading))
-                    .animation(Animation.easeOut)
             }
         }
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-public struct DefaultAngularGradientPickerStyle: AngularGradientPickerStyle {
+
+public struct DefaultAngularGradientPickerStyle: AngularGradientPickerStyle, Sendable {
     public init() {}
     public func makeGradient(gradient: AngularGradient) -> some View {
         RoundedRectangle(cornerRadius: 5)
@@ -166,7 +157,6 @@ public struct DefaultAngularGradientPickerStyle: AngularGradientPickerStyle {
             .foregroundColor(Color.white)
             .frame(width: 30, height: 75)
             .rotationEffect(configuration.angle)
-            .animation(.none)
             .shadow(radius: 3)
             .opacity(configuration.isHidden ? 0 : 1)
     }
@@ -175,7 +165,6 @@ public struct DefaultAngularGradientPickerStyle: AngularGradientPickerStyle {
             .foregroundColor(Color.white)
             .frame(width: 30, height: 75)
             .rotationEffect(configuration.angle)
-            .animation(.none)
             .shadow(radius: 3)
             .opacity(configuration.isHidden ? 0 : 1)
     }
@@ -188,7 +177,6 @@ public struct DefaultAngularGradientPickerStyle: AngularGradientPickerStyle {
                     .overlay(Circle().stroke( configuration.isSelected ? Color.yellow : Color.white ))
                     .shadow(color: configuration.isSelected ? Color.white : Color.black, radius: 3)
                     .transition(AnyTransition.opacity)
-                    .animation(Animation.easeOut)
             }
         }
     }
@@ -197,8 +185,8 @@ public struct DefaultAngularGradientPickerStyle: AngularGradientPickerStyle {
 // MARK: - Style Setup
 
 // MARK: Linear
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-public protocol LinearGradientPickerStyle {
+
+public protocol LinearGradientPickerStyle: Sendable {
     associatedtype GradientView: View
     associatedtype StartHandle: View
     associatedtype EndHandle: View
@@ -209,54 +197,55 @@ public protocol LinearGradientPickerStyle {
     func makeEndHandle(configuration: GradientHandleConfiguration) -> Self.EndHandle
     func makeStop(configuration: GradientStopConfiguration) -> Self.Stop
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public extension LinearGradientPickerStyle {
     func makeGradientTypeErased(gradient: LinearGradient) -> AnyView {
-        AnyView(self.makeGradient(gradient: gradient))
+        AnyView(makeGradient(gradient: gradient))
     }
     func makeStartHandleTypeErased(configuration: GradientHandleConfiguration) -> AnyView {
-        AnyView(self.makeStartHandle(configuration: configuration))
+        AnyView(makeStartHandle(configuration: configuration))
     }
     func makeEndHandleTypeErased(configuration: GradientHandleConfiguration) -> AnyView {
-        AnyView(self.makeEndHandle(configuration: configuration))
+        AnyView(makeEndHandle(configuration: configuration))
     }
     func makeStopTypeErased(configuration: GradientStopConfiguration) -> AnyView {
-        AnyView(self.makeStop(configuration: configuration))
+        AnyView(makeStop(configuration: configuration))
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-public struct AnyLinearGradientPickerStyle: LinearGradientPickerStyle {
-    private let _makeGradient: (LinearGradient) -> AnyView
+
+public struct AnyLinearGradientPickerStyle: LinearGradientPickerStyle, Sendable {
+    private let _makeGradient: @Sendable (LinearGradient) -> AnyView
     public func makeGradient(gradient: LinearGradient) -> some View {
-        return self._makeGradient(gradient)
+        return _makeGradient(gradient)
     }
-    private let _makeStartHandle: (GradientHandleConfiguration) -> AnyView
+    
+    private let _makeStartHandle: @Sendable (GradientHandleConfiguration) -> AnyView
     public func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
-        return self._makeStartHandle(configuration)
+        return _makeStartHandle(configuration)
     }
     
-    private let _makeEndHandle: (GradientHandleConfiguration) -> AnyView
+    private let _makeEndHandle: @Sendable (GradientHandleConfiguration) -> AnyView
     public func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
-        return self._makeEndHandle(configuration)
+        return _makeEndHandle(configuration)
     }
     
-    private let _makeStop: (GradientStopConfiguration) -> AnyView
+    private let _makeStop: @Sendable (GradientStopConfiguration) -> AnyView
     public func makeStop(configuration: GradientStopConfiguration) -> some View {
-        return self._makeStop(configuration)
+        return _makeStop(configuration)
     }
     
     public init<ST: LinearGradientPickerStyle>(_ style: ST) {
-        self._makeGradient = style.makeGradientTypeErased
-        self._makeStartHandle = style.makeStartHandleTypeErased
-        self._makeEndHandle = style.makeEndHandleTypeErased
-        self._makeStop = style.makeStopTypeErased
+        _makeGradient = style.makeGradientTypeErased
+        _makeStartHandle = style.makeStartHandleTypeErased
+        _makeEndHandle = style.makeEndHandleTypeErased
+        _makeStop = style.makeStopTypeErased
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public struct LinearGradientPickerStyleKey: EnvironmentKey {
     public static let defaultValue: AnyLinearGradientPickerStyle  = AnyLinearGradientPickerStyle(DefaultLinearGradientPickerStyle())
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 extension EnvironmentValues {
     public var linearGradientPickerStyle: AnyLinearGradientPickerStyle {
         get {
@@ -267,16 +256,16 @@ extension EnvironmentValues {
         }
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 extension View {
     public func linearGradientPickerStyle<S>(_ style: S) -> some View where S: LinearGradientPickerStyle {
-        self.environment(\.linearGradientPickerStyle, AnyLinearGradientPickerStyle(style))
+        environment(\.linearGradientPickerStyle, AnyLinearGradientPickerStyle(style))
     }
 }
 
 // MARK:  Radial
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-public protocol RadialGradientPickerStyle {
+
+public protocol RadialGradientPickerStyle: Sendable {
     associatedtype GradientView: View
     associatedtype Center: View
     associatedtype StartHandle: View
@@ -292,74 +281,78 @@ public protocol RadialGradientPickerStyle {
     func makeBar(configuration: RadialGradientBarConfiguration) -> Self.GradientBar
     
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public extension RadialGradientPickerStyle {
     func makeGradientTypeErased(gradient: RadialGradient) -> AnyView {
-        AnyView(self.makeGradient(gradient: gradient))
+        AnyView(makeGradient(gradient: gradient))
     }
+    
     func makeCenterTypeErased(configuration: GradientCenterConfiguration) -> AnyView {
-        AnyView(self.makeCenter(configuration: configuration))
+        AnyView(makeCenter(configuration: configuration))
     }
+    
     func makeStartHandleTypeErased(configuration: GradientHandleConfiguration) -> AnyView {
-        AnyView(self.makeStartHandle(configuration: configuration))
+        AnyView(makeStartHandle(configuration: configuration))
     }
+    
     func makeEndHandleTypeErased(configuration: GradientHandleConfiguration) -> AnyView {
-        AnyView(self.makeEndHandle(configuration: configuration))
+        AnyView(makeEndHandle(configuration: configuration))
     }
+    
     func makeStopTypeErased(configuration: GradientStopConfiguration) -> AnyView {
-        AnyView(self.makeStop(configuration: configuration))
+        AnyView(makeStop(configuration: configuration))
     }
     
     func makeBarTypeErased(configuration: RadialGradientBarConfiguration) -> AnyView {
-        AnyView(self.makeBar(configuration: configuration))
+        AnyView(makeBar(configuration: configuration))
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-public struct AnyRadialGradientPickerStyle: RadialGradientPickerStyle {
-    private let _makeGradient: (RadialGradient) -> AnyView
+
+public struct AnyRadialGradientPickerStyle: RadialGradientPickerStyle, Sendable {
+    private let _makeGradient: @Sendable (RadialGradient) -> AnyView
     public func makeGradient(gradient: RadialGradient) -> some View {
-        return self._makeGradient(gradient)
+        return _makeGradient(gradient)
     }
-    private let _makeCenter: (GradientCenterConfiguration) -> AnyView
+    
+    private let _makeCenter: @Sendable (GradientCenterConfiguration) -> AnyView
     public func makeCenter(configuration: GradientCenterConfiguration) -> some View {
-        return self._makeCenter(configuration)
+        return _makeCenter(configuration)
     }
     
-    private let _makeStartHandle: (GradientHandleConfiguration) -> AnyView
+    private let _makeStartHandle: @Sendable (GradientHandleConfiguration) -> AnyView
     public func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
-        return self._makeStartHandle(configuration)
+        return _makeStartHandle(configuration)
     }
     
-    private let _makeEndHandle: (GradientHandleConfiguration) -> AnyView
+    private let _makeEndHandle: @Sendable (GradientHandleConfiguration) -> AnyView
     public func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
-        return self._makeEndHandle(configuration)
+        return _makeEndHandle(configuration)
     }
     
-    private let _makeStop: (GradientStopConfiguration) -> AnyView
+    private let _makeStop: @Sendable (GradientStopConfiguration) -> AnyView
     public func makeStop(configuration: GradientStopConfiguration) -> some View {
-        return self._makeStop(configuration)
+        return _makeStop(configuration)
     }
-    private let _makeBar: (RadialGradientBarConfiguration) -> AnyView
+    
+    private let _makeBar: @Sendable (RadialGradientBarConfiguration) -> AnyView
     public func makeBar(configuration: RadialGradientBarConfiguration) -> some View {
-        return self._makeBar(configuration)
+        return _makeBar(configuration)
     }
-    
-    
     
     public init<ST: RadialGradientPickerStyle>(_ style: ST) {
-        self._makeGradient = style.makeGradientTypeErased
-        self._makeCenter = style.makeCenterTypeErased
-        self._makeStartHandle = style.makeStartHandleTypeErased
-        self._makeEndHandle = style.makeEndHandleTypeErased
-        self._makeStop = style.makeStopTypeErased
-        self._makeBar = style.makeBarTypeErased
+        _makeGradient = style.makeGradientTypeErased
+        _makeCenter = style.makeCenterTypeErased
+        _makeStartHandle = style.makeStartHandleTypeErased
+        _makeEndHandle = style.makeEndHandleTypeErased
+        _makeStop = style.makeStopTypeErased
+        _makeBar = style.makeBarTypeErased
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public struct RadialGradientPickerStyleKey: EnvironmentKey {
     public static let defaultValue: AnyRadialGradientPickerStyle  = AnyRadialGradientPickerStyle(DefaultRadialGradientPickerStyle())
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 extension EnvironmentValues {
     public var radialGradientPickerStyle: AnyRadialGradientPickerStyle {
         get {
@@ -370,16 +363,16 @@ extension EnvironmentValues {
         }
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 extension View {
     public func radialGradientPickerStyle<S>(_ style: S) -> some View where S: RadialGradientPickerStyle {
-        self.environment(\.radialGradientPickerStyle, AnyRadialGradientPickerStyle(style))
+        environment(\.radialGradientPickerStyle, AnyRadialGradientPickerStyle(style))
     }
 }
 
 // MARK:  Angular
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-public protocol AngularGradientPickerStyle {
+
+public protocol AngularGradientPickerStyle: Sendable {
     associatedtype GradientView: View
     associatedtype Center: View
     associatedtype StartHandle: View
@@ -393,65 +386,69 @@ public protocol AngularGradientPickerStyle {
     func makeStop(configuration: GradientStopConfiguration) -> Self.Stop
     
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public extension AngularGradientPickerStyle {
     func makeGradientTypeErased(gradient: AngularGradient) -> AnyView {
-        AnyView(self.makeGradient(gradient: gradient))
+        AnyView(makeGradient(gradient: gradient))
     }
+    
     func makeCenterTypeErased(configuration: GradientCenterConfiguration) -> AnyView {
-        AnyView(self.makeCenter(configuration: configuration))
+        AnyView(makeCenter(configuration: configuration))
     }
+    
     func makeStartHandleTypeErased(configuration: GradientHandleConfiguration) -> AnyView {
-        AnyView(self.makeStartHandle(configuration: configuration))
+        AnyView(makeStartHandle(configuration: configuration))
     }
+    
     func makeEndHandleTypeErased(configuration: GradientHandleConfiguration) -> AnyView {
-        AnyView(self.makeEndHandle(configuration: configuration))
+        AnyView(makeEndHandle(configuration: configuration))
     }
+    
     func makeStopTypeErased(configuration: GradientStopConfiguration) -> AnyView {
-        AnyView(self.makeStop(configuration: configuration))
+        AnyView(makeStop(configuration: configuration))
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
-public struct AnyAngularGradientPickerStyle: AngularGradientPickerStyle {
-    private let _makeGradient: (AngularGradient) -> AnyView
+
+public struct AnyAngularGradientPickerStyle: AngularGradientPickerStyle, Sendable {
+    private let _makeGradient: @Sendable (AngularGradient) -> AnyView
     public func makeGradient(gradient: AngularGradient) -> some View {
-        return self._makeGradient(gradient)
+        return _makeGradient(gradient)
     }
-    private let _makeCenter: (GradientCenterConfiguration) -> AnyView
+    
+    private let _makeCenter: @Sendable (GradientCenterConfiguration) -> AnyView
     public func makeCenter(configuration: GradientCenterConfiguration) -> some View {
-        return self._makeCenter(configuration)
+        return _makeCenter(configuration)
     }
     
-    private let _makeStartHandle: (GradientHandleConfiguration) -> AnyView
+    private let _makeStartHandle: @Sendable (GradientHandleConfiguration) -> AnyView
     public func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
-        return self._makeStartHandle(configuration)
+        return _makeStartHandle(configuration)
     }
     
-    private let _makeEndHandle: (GradientHandleConfiguration) -> AnyView
+    private let _makeEndHandle: @Sendable (GradientHandleConfiguration) -> AnyView
     public func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
-        return self._makeEndHandle(configuration)
+        return _makeEndHandle(configuration)
     }
     
-    private let _makeStop: (GradientStopConfiguration) -> AnyView
+    private let _makeStop: @Sendable (GradientStopConfiguration) -> AnyView
     public func makeStop(configuration: GradientStopConfiguration) -> some View {
-        return self._makeStop(configuration)
+        return _makeStop(configuration)
     }
-    
     
     public init<ST: AngularGradientPickerStyle>(_ style: ST) {
-        self._makeGradient = style.makeGradientTypeErased
-        self._makeCenter = style.makeCenterTypeErased
-        self._makeStartHandle = style.makeStartHandleTypeErased
-        self._makeEndHandle = style.makeEndHandleTypeErased
-        self._makeStop = style.makeStopTypeErased
+        _makeGradient = style.makeGradientTypeErased
+        _makeCenter = style.makeCenterTypeErased
+        _makeStartHandle = style.makeStartHandleTypeErased
+        _makeEndHandle = style.makeEndHandleTypeErased
+        _makeStop = style.makeStopTypeErased
         
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 public struct AngularGradientPickerStyleKey: EnvironmentKey {
     public static let defaultValue: AnyAngularGradientPickerStyle  = AnyAngularGradientPickerStyle(DefaultAngularGradientPickerStyle())
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 extension EnvironmentValues {
     public var angularGradientPickerStyle: AnyAngularGradientPickerStyle {
         get {
@@ -462,9 +459,9 @@ extension EnvironmentValues {
         }
     }
 }
-@available(iOS 13.0, macOS 10.15, watchOS 6.0 , *)
+
 extension View {
     public func angularGradientPickerStyle<S>(_ style: S) -> some View where S: AngularGradientPickerStyle {
-        self.environment(\.angularGradientPickerStyle, AnyAngularGradientPickerStyle(style))
+        environment(\.angularGradientPickerStyle, AnyAngularGradientPickerStyle(style))
     }
 }
