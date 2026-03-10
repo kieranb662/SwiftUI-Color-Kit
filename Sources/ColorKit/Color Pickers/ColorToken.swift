@@ -1,9 +1,8 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/8/20.
 //
-//  ColorToken.swift
-//  MyExamples
-//
-//  Created by Kieran Brown on 4/8/20.
-//  Copyright © 2020 BrownandSons. All rights reserved.
+// Author: Kieran Brown
 //
 
 import SwiftUI
@@ -67,7 +66,10 @@ public struct ColorToken: Identifiable, Sendable {
         case .hsb:
             return Color(hue: hue, saturation: saturation, brightness: brightness, opacity: alpha)
         case .cmyk:
-            return Color(PlatformColor(cmyk: (CGFloat(cyan), CGFloat(magenta), CGFloat(yellow), CGFloat(keyBlack)))).opacity(alpha)
+            return Color(
+                PlatformColor(cmyk: (CGFloat(cyan), CGFloat(magenta), CGFloat(yellow), CGFloat(keyBlack)))
+            )
+                .opacity(alpha)
         case .gray:
             return Color(white: white).opacity(alpha)
         }

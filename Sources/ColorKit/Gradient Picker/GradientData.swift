@@ -1,10 +1,9 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/13/20.
 //
-//  GradientData.swift
-//  
+// Author: Kieran Brown
 //
-//  Created by Kieran Brown on 4/13/20.
-//
-
 
 import SwiftUI
 

@@ -1,8 +1,8 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/12/20.
 //
-//  File.swift
-//
-//
-//  Created by Kieran Brown on 4/12/20.
+// Author: Kieran Brown
 //
 
 import SwiftUI
@@ -10,7 +10,7 @@ import SwiftUI
 public class ColorManager: ObservableObject {
     @Published public var colors: [UUID: ColorToken]
     @Published public var selected: UUID?
-    @Published public var defaultColor: ColorToken = .init(r: 0.5, g: 0.5, b: 0.5)
+    @Published public var defaultColor: ColorToken = ColorToken(r: 0.5, g: 0.5, b: 0.5)
     
     public func add() {
         let new: ColorToken = {

@@ -1,11 +1,9 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/6/20.
 //
-//  GradientPicker.swift
-//  MyExamples
+// Author: Kieran Brown
 //
-//  Created by Kieran Brown on 4/6/20.
-//  Copyright © 2020 BrownandSons. All rights reserved.
-//
-
 import SwiftUI
 
 // MARK: Gradient Manager

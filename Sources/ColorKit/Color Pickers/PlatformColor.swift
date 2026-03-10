@@ -1,8 +1,8 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/13/20.
 //
-//  PlatformColor.swift
-//  
-//
-//  Created by Kieran Brown on 4/13/20.
+// Author: Kieran Brown
 //
 
 #if os(iOS) || os(tvOS)
@@ -12,7 +12,6 @@ public typealias PlatformColor = UIColor
 import AppKit
 public typealias PlatformColor = NSColor
 #endif
-
 
 extension PlatformColor {
     

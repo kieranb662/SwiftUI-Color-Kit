@@ -1,9 +1,8 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/7/20.
 //
-//  RGBColorPicker.swift
-//  MyExamples
-//
-//  Created by Kieran Brown on 4/7/20.
-//  Copyright © 2020 BrownandSons. All rights reserved.
+// Author: Kieran Brown
 //
 
 import SwiftUI
@@ -92,23 +91,23 @@ public struct RGBColorPicker: View {
         self.sliderHeights = sliderHeights
     }
     
-    private func makeSlider( _ color: RGBSliderStyle.ColorType) -> some View {
+    private func makeSlider( _ colorType: RGBSliderStyle.ColorType) -> some View {
         let value: Binding<Double> =  {
-            switch color {
+            switch colorType {
             case .red:
-                return Binding(get: {self.color.red},
-                               set: {self.color = self.color.update(red: $0)})
+                return Binding(get: { color.red },
+                               set: { color = color.update(red: $0) })
             case .blue:
-                return Binding(get: {self.color.blue},
-                               set: {self.color = self.color.update(blue: $0)})
+                return Binding(get: { color.blue },
+                               set: { color = color.update(blue: $0) })
             case .green:
-                return Binding(get: {self.color.green},
-                               set: {self.color = self.color.update(green: $0)})
+                return Binding(get: { color.green },
+                               set: { color = color.update(green: $0) })
             }
         }()
         
         return LSlider(value, range: 0...1, angle: .zero)
-            .linearSliderStyle(RGBSliderStyle(sliderHeight: sliderHeights, type: color, color: self.color))
+            .linearSliderStyle(RGBSliderStyle(sliderHeight: sliderHeights, type: colorType, color: color))
             .frame(height: sliderHeights)
     }
     

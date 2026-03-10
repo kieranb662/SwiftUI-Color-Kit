@@ -1,9 +1,8 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/5/20.
 //
-//  AngularGradientPicker.swift
-//  MyExamples
-//
-//  Created by Kieran Brown on 4/5/20.
-//  Copyright © 2020 BrownandSons. All rights reserved.
+// Author: Kieran Brown
 //
 
 import SwiftUI
@@ -78,18 +77,20 @@ public struct AngularStop: View {
     public var body: some View {
         GeometryReader { proxy in
             ZStack {
-                style.makeStop(configuration: configuration)
+                style
+                    .makeStop(configuration: configuration)
                     .offset(offset(proxy))
                     .onTapGesture(perform: select)
                     .simultaneousGesture(
                         DragGesture(minimumDistance: 5, coordinateSpace: .named(space))
-                            .onChanged({
+                            .onChanged {
                                 calculateStopLocation($0.location)
                                 isActive = true
-                            }).onEnded({
+                            }
+                            .onEnded {
                                 calculateStopLocation($0.location)
                                 isActive = false
-                            })
+                            }
                     )
             }
         }
@@ -220,32 +221,45 @@ public struct AngularGradientPicker: View {
     // MARK:  Views
     // Creates the Angular Gradient
     private func gradient(_ proxy: GeometryProxy) -> some View {
-        style.makeGradient(gradient: AngularGradient(gradient: manager.gradient.gradient,
-                                                     center: currentCenter(proxy),
-                                                     startAngle: Angle(radians: currentStates.start*2 * .pi),
-                                                     endAngle: Angle(radians: currentStates.end*2 * .pi)))
+        style.makeGradient(
+            gradient: AngularGradient(
+                gradient: manager.gradient.gradient,
+                center: currentCenter(proxy),
+                startAngle: Angle(radians: currentStates.start*2 * .pi),
+                endAngle: Angle(radians: currentStates.end*2 * .pi)
+            )
+        )
         .drawingGroup(opaque: false, colorMode: manager.gradient.renderMode.renderingMode)
     }
     
     // Created the center thumb
     private func center(_ proxy: GeometryProxy) -> some View {
-        style.makeCenter(configuration: .init(isActive: centerState != .zero, isHidden: manager.hideTools))
-            .position(currentCenter(proxy))
-            .gesture(
-                DragGesture(minimumDistance: 0, coordinateSpace: .named(space))
-                    .onChanged({centerState = $0.translation})
-                    .onEnded({
-                        let x = $0.location.x/proxy.size.width
-                        let y = $0.location.y/proxy.size.height
-                        
-                        manager.gradient.center = UnitPoint(x: x, y: y)
-                        centerState = .zero
-                    })
-            )
+        style.makeCenter(
+            configuration: .init(isActive: centerState != .zero, isHidden: manager.hideTools)
+        )
+        .position(currentCenter(proxy))
+        .gesture(
+            DragGesture(minimumDistance: 0, coordinateSpace: .named(space))
+                .onChanged {
+                    centerState = $0.translation
+                }
+                .onEnded {
+                    let x = $0.location.x/proxy.size.width
+                    let y = $0.location.y/proxy.size.height
+                    
+                    manager.gradient.center = UnitPoint(x: x, y: y)
+                    centerState = .zero
+                }
+        )
     }
     
     private var startConfiguration: GradientHandleConfiguration {
-        .init(startState != 0, startState != 0, manager.hideTools, Angle(radians: (currentStates.start) * 2 * .pi + .pi/2  ))
+        GradientHandleConfiguration(
+            startState != 0,
+            startState != 0,
+            manager.hideTools,
+            Angle(radians: (currentStates.start) * 2 * .pi + .pi/2)
+        )
     }
     
     // Creates the startHandle
@@ -255,19 +269,24 @@ public struct AngularGradientPicker: View {
             .position(currentCenter(proxy))
             .gesture(
                 DragGesture(minimumDistance: 10, coordinateSpace: .named(space))
-                    .onChanged({
+                    .onChanged {
                         let direction = calculateDirection(currentCenter(proxy), $0.location)
                         startState = direction - manager.gradient.startAngle
-                    })
-                    .onEnded({
+                    }
+                    .onEnded {
                         manager.gradient.startAngle = calculateDirection(currentCenter(proxy), $0.location)
                         startState = 0
-                    })
+                    }
             )
     }
     
     private var endConfiguration: GradientHandleConfiguration {
-        .init(endState != 0, endState != 0, manager.hideTools, Angle(radians: (currentStates.end) * 2 * .pi + .pi/2  ))
+        GradientHandleConfiguration(
+            endState != 0,
+            endState != 0,
+            manager.hideTools,
+            Angle(radians: (currentStates.end) * 2 * .pi + .pi/2)
+        )
     }
     
     // Creates the end handle

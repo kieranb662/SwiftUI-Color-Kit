@@ -1,14 +1,13 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/6/20.
 //
-//  GradientStyles.swift
-//  MyExamples
-//
-//  Created by Kieran Brown on 4/6/20.
-//  Copyright © 2020 BrownandSons. All rights reserved.
+// Author: Kieran Brown
 //
 
 import SwiftUI
-// MARK: - Configuration Structures
 
+// MARK: - Configuration Structures
 
 /// Used to style the dragging view that represents a gradients start or end value
 public struct GradientHandleConfiguration {
@@ -67,7 +66,6 @@ public struct DefaultLinearGradientPickerStyle: LinearGradientPickerStyle {
             .foregroundColor(Color.white)
             .frame(width: 25, height: 75)
             .rotationEffect(configuration.angle + Angle(degrees: 90))
-            .animation(.none)
             .shadow(radius: 3)
             .opacity(configuration.isHidden ? 0 : 1)
     }
@@ -76,7 +74,6 @@ public struct DefaultLinearGradientPickerStyle: LinearGradientPickerStyle {
             .foregroundColor(Color.white)
             .frame(width: 25, height: 75)
             .rotationEffect(configuration.angle + Angle(degrees: 90))
-            .animation(.none)
             .shadow(radius: 3)
             .opacity(configuration.isHidden ? 0 : 1)
     }
@@ -86,7 +83,6 @@ public struct DefaultLinearGradientPickerStyle: LinearGradientPickerStyle {
             .frame(width: 20, height: 55)
             .overlay(Capsule().stroke( configuration.isSelected ? Color.yellow : Color.white ))
             .rotationEffect(configuration.angle + Angle(degrees: 90))
-            .animation(.none)
             .shadow(color: configuration.isSelected ? Color.white : Color.black, radius: 3)
             .opacity(configuration.isHidden ? 0 : 1)
         
@@ -105,21 +101,18 @@ public struct DefaultRadialGradientPickerStyle: RadialGradientPickerStyle {
             .fill(configuration.isActive ? Color.yellow : Color.white)
             .frame(width: 35, height: 35)
             .opacity(configuration.isHidden ? 0 : 1)
-            .animation(.easeIn)
     }
     public func makeStartHandle(configuration: GradientHandleConfiguration) -> some View {
         Circle()
             .stroke(Color.white.opacity(0.001), style: StrokeStyle(lineWidth: 10))
             .overlay(Circle().stroke(Color.black, style: StrokeStyle(lineWidth: 1, dash: [10, 5])))
             .opacity(configuration.isHidden ? 0 : 1)
-            .animation(.easeIn)
     }
     public func makeEndHandle(configuration: GradientHandleConfiguration) -> some View {
         Circle()
             .stroke(Color.white.opacity(0.001), style: StrokeStyle(lineWidth: 10))
             .overlay(Circle().stroke(Color.white, style: StrokeStyle(lineWidth: 1, dash: [10, 5])))
             .opacity(configuration.isHidden ? 0 : 1)
-            .animation(.easeIn)
     }
     public func makeStop(configuration: GradientStopConfiguration) -> some View {
         Group {
@@ -130,7 +123,7 @@ public struct DefaultRadialGradientPickerStyle: RadialGradientPickerStyle {
                     .overlay(RoundedRectangle(cornerRadius: 5).stroke( configuration.isSelected ? Color.yellow : Color.white ))
                     .shadow(color: configuration.isSelected ? Color.white : Color.black, radius: 3)
                     .transition(AnyTransition.opacity)
-                    .animation(Animation.easeOut)
+ 
             }
         }
     }
@@ -141,7 +134,6 @@ public struct DefaultRadialGradientPickerStyle: RadialGradientPickerStyle {
                     .fill(LinearGradient(gradient: configuration.gradient, startPoint: .leading, endPoint: .trailing))
                     .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.white))
                     .transition(AnyTransition.move(edge: .leading))
-                    .animation(Animation.easeOut)
             }
         }
     }
@@ -165,7 +157,6 @@ public struct DefaultAngularGradientPickerStyle: AngularGradientPickerStyle, Sen
             .foregroundColor(Color.white)
             .frame(width: 30, height: 75)
             .rotationEffect(configuration.angle)
-            .animation(.none)
             .shadow(radius: 3)
             .opacity(configuration.isHidden ? 0 : 1)
     }
@@ -174,7 +165,6 @@ public struct DefaultAngularGradientPickerStyle: AngularGradientPickerStyle, Sen
             .foregroundColor(Color.white)
             .frame(width: 30, height: 75)
             .rotationEffect(configuration.angle)
-            .animation(.none)
             .shadow(radius: 3)
             .opacity(configuration.isHidden ? 0 : 1)
     }
@@ -187,7 +177,6 @@ public struct DefaultAngularGradientPickerStyle: AngularGradientPickerStyle, Sen
                     .overlay(Circle().stroke( configuration.isSelected ? Color.yellow : Color.white ))
                     .shadow(color: configuration.isSelected ? Color.white : Color.black, radius: 3)
                     .transition(AnyTransition.opacity)
-                    .animation(Animation.easeOut)
             }
         }
     }

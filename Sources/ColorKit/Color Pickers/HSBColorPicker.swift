@@ -1,9 +1,8 @@
+// Swift toolchain version 6.0
+// Running macOS version 26.3
+// Created on 4/7/20.
 //
-//  HSBColorPicker.swift
-//  MyExamples
-//
-//  Created by Kieran Brown on 4/7/20.
-//  Copyright © 2020 BrownandSons. All rights reserved.
+// Author: Kieran Brown
 //
 
 import SwiftUI
@@ -95,7 +94,10 @@ public struct SaturationBrightnessStyle: TrackPadStyle {
                 .drawingGroup(opaque: false, colorMode: .extendedLinear)
                 .blendMode(.plusDarker)
         }
-        .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.white, lineWidth: 2))
+        .overlay(
+            RoundedRectangle(cornerRadius: 5)
+                .stroke(Color.white, lineWidth: 2)
+        )
     }
 }
 
@@ -123,7 +125,9 @@ public struct HSBColorPicker: View {
                         color = color.update(brightness: Double(new.y))
                         
                     }),
-                rangeX: 0.01...1, rangeY: 0.01...1)
+                rangeX: 0.01...1,
+                rangeY: 0.01...1
+            )
             .trackPadStyle(SaturationBrightnessStyle(hue: color.hue))
             
             LSlider(Binding(get: { color.hue }, set: { color = color.update(hue: $0) }))
